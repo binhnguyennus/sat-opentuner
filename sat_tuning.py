@@ -68,16 +68,17 @@ class SATTuner(MeasurementInterface):
 
             cmd += ' ' + str(cfg[param + str(i)])
 
-        print "Optimal config written to logs/best_log.txt: ", cmd
-        with open("logs/best_log.txt") as f:
+        print "Optimal config written to logs/tuned/best_log: ", cmd
+        with open("logs/tuned/tuned_log") as f:
+            lines = 0
             for lines, l in enumerate(f):
                 pass
             lines += 1
 
         # CHANGE TO WORK WITH BASH
-        with open("logs/best_log.txt", "a") as myfile:
+        with open("logs/tuned/best_log", "a") as myfile:
             myfile.write("/usr/bin/time -p " + cmd + 
-                ">>& logs/minsum/best/best{0}.txt".format(lines) + "\n")
+                "&> logs/tuned/tuned{0}.txt".format(lines) + "\n")
 
 if __name__ == '__main__':
     argparser = opentuner.default_argparser()
