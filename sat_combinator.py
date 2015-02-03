@@ -48,6 +48,7 @@ def ccanr_glucose(filename):
     instance = filename
     args = ' 1 1000'
     #print cmd + instance + args
+    #call(cmd + instance + args, shell=True)
     call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
     return
 
@@ -57,6 +58,7 @@ def glueSplit(filename):
     instance = filename
     args = ''
     #print cmd + instance + args
+    #call(cmd + instance + args, shell=True)
     call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
     return
 
@@ -66,6 +68,7 @@ def lingeling(filename):
     instance = filename
     args = ''
     #print cmd + instance + args
+    #call(cmd + instance + args, shell=True)
     call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
     return
 
@@ -75,6 +78,7 @@ def lingeling_druplig(filename):
     instance = filename
     args = ''
     #print cmd + instance + args
+    #call(cmd + instance + args, shell=True)
     call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
     return
 
@@ -84,6 +88,7 @@ def riss(filename):
     instance = filename
     args = ' .'
     #print cmd + instance + args
+    #call(cmd + instance + args, shell=True)
     call(cmd + instance + args, stderr=open(os.devnull, 'wb'), 
         stdout=open(os.devnull, 'wb'), shell=True)
     return
@@ -94,6 +99,7 @@ def sparrow(filename):
     instance = filename
     args = ' 1 .'
     #print cmd + instance + args
+    #call(cmd + instance + args, shell=True)
     call(cmd + instance + args, stderr=open(os.devnull, 'wb'),
         stdout=open(os.devnull, 'wb'), shell=True)
     return

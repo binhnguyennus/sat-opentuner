@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#! /bin/bash
 #
 # Runs the benchmarks multiple times,
 # and writes the logs.

@@ -93,7 +93,7 @@ id=""
 #
 # point to the place where all the data is stored
 #
-path="." # there is no extra directory!
+path="./solvers/Riss" # there is no extra directory!
 
 #
 # setup path for the project

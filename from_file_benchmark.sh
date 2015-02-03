@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#! /bin/bash
 # Runs the solutions on a given file,
 # for a given number of times,
 # and writes the logs.

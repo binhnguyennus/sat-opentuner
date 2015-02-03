@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#! /bin/bash
 # Runs a given number of experiments and
 # writes the logs.
 #

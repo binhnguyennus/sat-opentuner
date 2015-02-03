@@ -45,7 +45,7 @@ doDRAT=$1   # produce a DRAT proof for UNSAT instances
 shift
 
 # binary of the used SAT solver
-satsolver=sparrow						# name of the binary (if not in this directory, give relative path as well)
+satsolver=solvers/Sparrow/sparrow						# name of the binary (if not in this directory, give relative path as well)
 
 # parameters for preprocessor
 cp3params="-enabled_cp3 -cp3_stats -up -subsimp -bve -no-bve_gates -no-bve_strength -bve_red_lits=1 -cp3_bve_heap=1 -bve_heap_updates=1 -bve_totalG -bve_cgrow_t=1000 -bve_cgrow=10 -ee -cp3_ee_it -unhide -cp3_uhdIters=5 -cp3_uhdEE -cp3_uhdTrans -cp3_uhdProbe=4 -cp3_uhdPrSize=3 -cp3_uhdUHLE=0"
@@ -89,7 +89,7 @@ if [ "x$doDRAT" == "x" ]
 then
 
 	ppStart=`date +%s`
-	./coprocessor $file $realModel -enabled_cp3 -undo=$undo -dimacs=$tmpCNF $cp3params 1>&2
+	./solvers/Sparrow/coprocessor $file $realModel -enabled_cp3 -undo=$undo -dimacs=$tmpCNF $cp3params 1>&2
 	exitCode=$?
 	ppEnd=`date +%s`
 	echo "c preprocessed $(( $ppEnd - $ppStart)) seconds" 1>&2
@@ -126,7 +126,7 @@ then
 			# coprocessor can also handle "s UNSATISFIABLE"
 			#
 			echo "c post-process with coprocessor"
-			./coprocessor -post -undo=$undo -model=$model > $realModel
+			./solvers/Sparrow/coprocessor -post -undo=$undo -model=$model > $realModel
 	
 			#
 			# verify final output if SAT?
