@@ -17,4 +17,6 @@ do
         echo "sum $SUM" >> ${f}.sum
         rm ${f}
     done
+    rm *.arff
+    rm classify_*
 done

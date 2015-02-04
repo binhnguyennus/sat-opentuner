@@ -25,4 +25,6 @@ do
         echo "sum $SUM" >> ${TMP}.txt
         rm $TMP
     done
+    rm *.arff
+    rm classify_*
 done
