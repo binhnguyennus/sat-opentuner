@@ -137,27 +137,24 @@ elif solve_all:
 
     selected = args.selected
 
-    if (selected == '1'):
-        solver = sparrow
-    elif (selected == '2'):
-        solver = glueSplit
-    elif (selected == '3'):
-        solver = lingeling
-    elif (selected == '4'):
-        solver = lingeling_druplig
-    elif (selected == '5'):
-        solver = riss
-    elif (selected == '6'):
-        solver = ccanr_glucose
-    else:
-        print 'ERROR: INVALID SOLVER ID!'
-
     instance_file = open(args.file, 'r')
     line = instance_file.readline().rstrip()            
 
     while line != '':
 
-        solver(INSTANCES_DIR + line)
+        if (selected == '1'):
+            sparrow(INSTANCES_DIR + line)
+        elif (selected == '2'):
+            glueSplit(INSTANCES_DIR + line)
+        elif (selected == '3'):
+            lingeling(INSTANCES_DIR + line)
+        elif (selected == '4'):
+            lingeling_druplig(INSTANCES_DIR + line)
+        elif (selected == '5'):
+            riss(INSTANCES_DIR + line)
+        elif (selected == '6'):
+            ccanr_glucose(INSTANCES_DIR + line)
+
         line = instance_file.readline().rstrip()
 
 else:
