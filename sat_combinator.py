@@ -181,6 +181,6 @@ else:
         else:
             print 'ERROR: INVALID SOLVER ID!'
             break
-
+        solved += 1
         line = instance_file.readline().rstrip()
 
