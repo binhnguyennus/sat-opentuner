@@ -117,17 +117,17 @@ if single_solve:
     line = linecache.getline(args.file, int(target)).rstrip()
 
     if (selected == '1'):
-        sparrow(INSTANCES_DIR + line)
+        ccanr_glucose(INSTANCES_DIR + line)
     elif (selected == '2'):
         glueSplit(INSTANCES_DIR + line)
     elif (selected == '3'):
         lingeling(INSTANCES_DIR + line)
     elif (selected == '4'):
         lingeling_druplig(INSTANCES_DIR + line)
-    elif (selected == '5'):
-        riss(INSTANCES_DIR + line)
-    elif (selected == '6'):
-        ccanr_glucose(INSTANCES_DIR + line)
+    #elif (selected == '5'):
+        #riss(INSTANCES_DIR + line)
+    #elif (selected == '6'):
+        #sparrow(INSTANCES_DIR + line)
     else:
         print 'ERROR: INVALID SOLVER ID!'
 
@@ -143,17 +143,17 @@ elif solve_all:
     while line != '':
 
         if (selected == '1'):
-            sparrow(INSTANCES_DIR + line)
+            ccanr_glucose(INSTANCES_DIR + line)
         elif (selected == '2'):
             glueSplit(INSTANCES_DIR + line)
         elif (selected == '3'):
             lingeling(INSTANCES_DIR + line)
         elif (selected == '4'):
             lingeling_druplig(INSTANCES_DIR + line)
-        elif (selected == '5'):
-            riss(INSTANCES_DIR + line)
-        elif (selected == '6'):
-            ccanr_glucose(INSTANCES_DIR + line)
+        #elif (selected == '5'):
+            #riss(INSTANCES_DIR + line)
+        #elif (selected == '6'):
+            #sparrow(INSTANCES_DIR + line)
 
         line = instance_file.readline().rstrip()
 
@@ -167,17 +167,17 @@ else:
     while line != '':
 
         if (config[solved] == '1'):
-            sparrow(INSTANCES_DIR + line)
+            ccanr_glucose(INSTANCES_DIR + line)
         elif (config[solved] == '2'):
             glueSplit(INSTANCES_DIR + line)
         elif (config[solved] == '3'):
             lingeling(INSTANCES_DIR + line)
         elif (config[solved] == '4'):
             lingeling_druplig(INSTANCES_DIR + line)
-        elif (config[solved] == '5'):
-            riss(INSTANCES_DIR + line)
-        elif (config[solved] == '6'):
-            ccanr_glucose(INSTANCES_DIR + line)
+        #elif (config[solved] == '5'):
+            #riss(INSTANCES_DIR + line)
+        #elif (config[solved] == '6'):
+            #sparrow(INSTANCES_DIR + line)
         else:
             print 'ERROR: INVALID SOLVER ID!'
             break

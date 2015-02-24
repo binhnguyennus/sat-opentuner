@@ -11,7 +11,7 @@ from opentuner import IntegerParameter
 from opentuner import MeasurementInterface
 from opentuner import Result
 
-SOLVERS = ('i', 1, 6)
+SOLVERS = ('i', 1, 4)
 INSTANCE_FILE = ' --instance-file instance_set_3.txt'
 BENCHMARK = ' --benchmark instances/sat_lib/'
 CONFIG = ' --solver-config'
@@ -68,17 +68,16 @@ class SATTuner(MeasurementInterface):
 
             cmd += ' ' + str(cfg[param + str(i)])
 
-        print "Optimal config written to logs/tuned/tuned_log: ", cmd
-        with open("logs/tuned/tuned_log") as f:
+        print "Optimal config written to logs/short_3600tuned/tuned_log: ", cmd
+        with open("logs/short_3600tuned/tuned_log") as f:
             lines = 0
             for lines, l in enumerate(f):
                 pass
-            lines += 1
+            lines += 2
 
-        # CHANGE TO WORK WITH BASH
-        with open("logs/tuned/tuned_log", "a") as myfile:
+        with open("logs/short_3600tuned/tuned_log", "a") as myfile:
             myfile.write("/usr/bin/time -p " + cmd + 
-                " &> logs/tuned/tuned{0}.txt".format(lines) + "\n")
+                " &> logs/short_3600tuned/tuned{0}.txt".format(lines) + "\n")
 
 if __name__ == '__main__':
     argparser = opentuner.default_argparser()
