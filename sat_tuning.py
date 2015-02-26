@@ -31,19 +31,16 @@ argparser.add_argument('--bestlog',
         dest = 'log_file',
         required = True,
         help = 'File to log the best configurations over several runs.')
+argparser.add_argument('--log-best-data',
+        dest = 'log_best',
+        action = 'store_true',
+        help = 'Saves the best configuration as a JSON file.')
 
-argparser.set_defaults(timeout=9)
-argparser.set_defaults(instance_number=320)
-argparser.set_defaults(benchmark='instances/sat_lib/')
-argparser.set_defaults(instances='instance_set_3.txt')
-
-SOLVERS = ('i', 1, 4)
-INSTANCE_FILE = ' --instance-file instance_set_3.txt'
-BENCHMARK = ' --benchmark instances/sat_lib/'
-CONFIG = ' --solver-config'
-CMD = 'python2 sat_combinator.py'
-INSTANCES = 320 
-TIMEOUT = 9
+argparser.set_defaults(timeout = 9)
+argparser.set_defaults(instance_number = 320)
+argparser.set_defaults(benchmark = 'instances/sat_lib/')
+argparser.set_defaults(instances = 'instance_set_3.txt')
+argparser.set_defaults(log_best = False)
 
 class SATTuner(MeasurementInterface):
 
@@ -90,18 +87,22 @@ class SATTuner(MeasurementInterface):
         cmd = CMD
         cmd += INSTANCE_FILE + BENCHMARK + CONFIG
 
+        if (LOG_BEST):
+            print "Optimal configuration written to 'final_config.json'."
+            self.manipulator().save_to_file(cfg, LOG_DIR + 'final_config.json')
+
         for i in range (INSTANCES):
 
             cmd += ' ' + str(cfg[param + str(i)])
 
         print "Optimal config written to " + LOG_DIR + LOG_FILE + ": ", cmd
-        with open(LOG_DIR + LOG_FILE) as f:
+        with open(LOG_DIR + LOG_FILE, 'w+') as f:
             lines = 0
             for lines, l in enumerate(f):
                 pass
             lines += 2
 
-        with open(LOG_DIR + LOG_FILE, "a") as myfile:
+        with open(LOG_DIR + LOG_FILE, 'a') as myfile:
             myfile.write("/usr/bin/time -p " + cmd + 
                 " &> " + LOG_DIR + "tuned{0}.txt".format(lines) + "\n")
 
@@ -112,6 +113,7 @@ if __name__ == '__main__':
     INSTANCE_FILE = ' --instance-file ' + args.instances
     LOG_DIR = args.log_dir
     LOG_FILE = args.log_file
+    LOG_BEST = args.log_best
     BENCHMARK = ' --benchmark ' + args.benchmark
     CONFIG = ' --solver-config'
     CMD = 'python2 sat_combinator.py'
