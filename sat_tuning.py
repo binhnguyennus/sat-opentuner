@@ -109,7 +109,7 @@ class SATTuner(MeasurementInterface):
 if __name__ == '__main__':
     args = argparser.parse_args()
 
-    SOLVERS = ('i', 1, 4)
+    SOLVERS = ('i', 1, 6)
     INSTANCE_FILE = ' --instance-file ' + args.instances
     LOG_DIR = args.log_dir
     LOG_FILE = args.log_file

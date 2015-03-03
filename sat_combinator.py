@@ -124,10 +124,10 @@ if single_solve:
         lingeling(INSTANCES_DIR + line)
     elif (selected == '4'):
         lingeling_druplig(INSTANCES_DIR + line)
-    #elif (selected == '5'):
-        #riss(INSTANCES_DIR + line)
-    #elif (selected == '6'):
-        #sparrow(INSTANCES_DIR + line)
+    elif (selected == '5'):
+        riss(INSTANCES_DIR + line)
+    elif (selected == '6'):
+        sparrow(INSTANCES_DIR + line)
     else:
         print 'ERROR: INVALID SOLVER ID!'
 
@@ -150,10 +150,10 @@ elif solve_all:
             lingeling(INSTANCES_DIR + line)
         elif (selected == '4'):
             lingeling_druplig(INSTANCES_DIR + line)
-        #elif (selected == '5'):
-            #riss(INSTANCES_DIR + line)
-        #elif (selected == '6'):
-            #sparrow(INSTANCES_DIR + line)
+        elif (selected == '5'):
+            riss(INSTANCES_DIR + line)
+        elif (selected == '6'):
+            sparrow(INSTANCES_DIR + line)
 
         line = instance_file.readline().rstrip()
 
@@ -174,10 +174,10 @@ else:
             lingeling(INSTANCES_DIR + line)
         elif (config[solved] == '4'):
             lingeling_druplig(INSTANCES_DIR + line)
-        #elif (config[solved] == '5'):
-            #riss(INSTANCES_DIR + line)
-        #elif (config[solved] == '6'):
-            #sparrow(INSTANCES_DIR + line)
+        elif (config[solved] == '5'):
+            riss(INSTANCES_DIR + line)
+        elif (config[solved] == '6'):
+            sparrow(INSTANCES_DIR + line)
         else:
             print 'ERROR: INVALID SOLVER ID!'
             break
