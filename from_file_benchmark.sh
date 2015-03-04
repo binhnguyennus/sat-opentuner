@@ -8,12 +8,12 @@ FILE=$3
 
 for i in $(seq 1 $RUNS)
 do
-    LOG="${FILE_PATH}/benchmark.txt"
-    TIME=`/usr/bin/time --portability python2 sat_combinator.py \
-    --instance-file instance_set_3.txt --benchmark instances/sat_lib/ \
-    --solve-all --select-solver $i |& grep -oP '(?<=real )[0-9]*.[0-9]*'`
-    bash ${FILE_PATH}/${FILE}
-    echo "$TIME" >> ${LOG}
+    COUNTER=0
+    while read line; do
+        LOG="${FILE_PATH}/benchmark_${COUNTER}.txt"
+        bash -c "${line} |& grep -oP '(?<=real )[0-9]*.[0-9]*' >> ${LOG}"
+        COUNTER=$((COUNTER+1))
+    done < "${FILE_PATH}/${FILE}"
 done
 rm *.arff
 rm classify*
