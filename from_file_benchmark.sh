@@ -8,15 +8,12 @@ FILE=$3
 
 for i in $(seq 1 $RUNS)
 do
+    LOG="${FILE_PATH}/benchmark.txt"
+    TIME=`/usr/bin/time --portability python2 sat_combinator.py \
+    --instance-file instance_set_3.txt --benchmark instances/sat_lib/ \
+    --solve-all --select-solver $i |& grep -oP '(?<=real )[0-9]*.[0-9]*'`
     bash ${FILE_PATH}/${FILE}
-    for f in ${FILE_PATH}/*.txt
-    do
-        USER_T=`grep -oP '(?<=user )[0-9]*.[0-9]*' ${f}`
-        SYS_T=`grep -oP '(?<=sys )[0-9]*.[0-9]*' ${f}`
-        SUM=$(awk "BEGIN{print $USER_T + $SYS_T}")
-        echo "sum $SUM" >> ${f}.sum
-        rm ${f}
-    done
-    rm *.arff
-    rm classify_*
+    echo "$TIME" >> ${LOG}
 done
+rm *.arff
+rm classify*
