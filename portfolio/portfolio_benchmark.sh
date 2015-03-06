@@ -6,7 +6,7 @@
 RUNS=$1
 SOLVERS=$2
 LOG_DIR=$3
-MAX_THREADS=1024
+MAX_THREADS=256
 
 # Runs the benchmark for a solver, and appends the sum of sys and user
 # times to a logfile for that solver.
