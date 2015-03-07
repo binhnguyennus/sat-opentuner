@@ -2,7 +2,7 @@ import os
 import time
 import argparse
 from subprocess import call
-from multiprocessing import Pool, cpu_count
+from multiprocessing import Pool, Value, cpu_count
 
 EXEC_DIR = 'sat-opentuner'
 SOLVERS_DIR = 'solvers/'
@@ -82,6 +82,7 @@ def sparrow(filename):
     return
 
 if __name__ == '__main__':
+
     PROJECT_DIR = os.getcwd().split(EXEC_DIR)[0]
     os.chdir(PROJECT_DIR + EXEC_DIR)
     args = parser.parse_args()
@@ -98,15 +99,38 @@ if __name__ == '__main__':
         '6': sparrow,
     }
 
+    with open(INSTANCES, 'r') as instance_file:    
+        lines = instance_file.read().splitlines()
+
     if (int(benchmark_solver) > 0):
-        with open(INSTANCES, 'r') as instance_file:    
-            lines = instance_file.read().splitlines()
 
         pool = Pool(threads)
         for line in lines:
-            pool.apply_async(solvers[benchmark_solver], args=(INSTANCES_DIR + line, ))
+            pool.apply_async(solvers[benchmark_solver], 
+                    args=(INSTANCES_DIR + line, ))
 
         pool.close()
         pool.join()
     else:
-        print '>Error: No non-benchmark support implemented. Please come later.\n'
+        workers = []
+        pools = []
+
+        pools.append(Pool(cpu_count()))
+        pools.append(Pool(cpu_count()))
+
+        workers.append(pools[0].map_async(solvers['1'],
+            iterable=[INSTANCES_DIR + l for l in lines]))
+
+        workers.append(pools[1].map_async(solvers['4'],
+            iterable=[INSTANCES_DIR + l for l in lines]))
+
+        for pool in pools:
+            pool.close()
+        
+        while True:
+            if any(worker.ready() for worker in workers):
+                print [w.ready() for w in workers]
+                for pool in pools:
+                    pool.terminate()
+
+                break
