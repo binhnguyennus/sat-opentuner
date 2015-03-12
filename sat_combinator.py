@@ -56,9 +56,9 @@ def ccanr_glucose(filename):
     cmd = SOLVERS_DIR + 'CCAnrglucose/CCAnr+glucose.sh '
     instance = filename
     args = ' 1 1000'
-    #print cmd + instance + args
-    #call(cmd + instance + args, shell=True)
-    call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
+    print cmd + instance + args
+    call(cmd + instance + args, shell=True)
+    #call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
     return
 
 def glueSplit(filename):
@@ -66,9 +66,9 @@ def glueSplit(filename):
     cmd = SOLVERS_DIR + 'glueSplit/glueSplit_clasp '
     instance = filename
     args = ''
-    #print cmd + instance + args
-    #call(cmd + instance + args, shell=True)
-    call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
+    print cmd + instance + args
+    call(cmd + instance + args, shell=True)
+    #call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
     return
 
 def lingeling(filename):
@@ -76,9 +76,9 @@ def lingeling(filename):
     cmd = SOLVERS_DIR + 'Lingeling/lingeling -v '
     instance = filename
     args = ''
-    #print cmd + instance + args
-    #call(cmd + instance + args, shell=True)
-    call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
+    print cmd + instance + args
+    call(cmd + instance + args, shell=True)
+    #call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
     return
 
 def lingeling_druplig(filename):
@@ -86,9 +86,9 @@ def lingeling_druplig(filename):
     cmd = SOLVERS_DIR + 'Lingeling/lingeling -v --druplig '
     instance = filename
     args = ''
-    #print cmd + instance + args
-    #call(cmd + instance + args, shell=True)
-    call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
+    print cmd + instance + args
+    call(cmd + instance + args, shell=True)
+    #call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
     return
 
 def riss(filename):
@@ -96,9 +96,9 @@ def riss(filename):
     cmd = SOLVERS_DIR + 'Riss/blackbox.sh '
     instance = filename
     args = ' .'
-    #print cmd + instance + args
-    #call(cmd + instance + args, shell=True)
-    call(cmd + instance + args, stderr=open(os.devnull, 'wb'), 
+    print cmd + instance + args
+    call(cmd + instance + args, shell=True)
+    #call(cmd + instance + args, stderr=open(os.devnull, 'wb'), 
         stdout=open(os.devnull, 'wb'), shell=True)
     return
 
@@ -107,9 +107,9 @@ def sparrow(filename):
     cmd = SOLVERS_DIR + 'Sparrow/SparrowToRiss.sh '
     instance = filename
     args = ' 1 .'
-    #print cmd + instance + args
-    #call(cmd + instance + args, shell=True)
-    call(cmd + instance + args, stderr=open(os.devnull, 'wb'),
+    print cmd + instance + args
+    call(cmd + instance + args, shell=True)
+    #call(cmd + instance + args, stderr=open(os.devnull, 'wb'),
         stdout=open(os.devnull, 'wb'), shell=True)
     return
 

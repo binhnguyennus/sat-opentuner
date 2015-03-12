@@ -12,14 +12,14 @@ RUNS=$6
 for i in $(seq 1 $RUNS)
 do
     python sat_tuning.py --no-dups --stop-after=${TIME} \
-    --parallelism=${THREADS} \ 
-    --results-log-detail=${LOG_DIR}logall.txt \ 
-    --results-log=${LOG_DIR}logbest.txt \
-    --instance_set=${INSTANCE_SET} \
-    --i=${INSTANCE_NUMBER} \
-    --logdir=${LOG_DIR} \ 
+    --logdir=${LOG_DIR} \
     --bestlog=final_config_commands \
-    --log-best-data
+    --log-best-data \
+    -i=${INSTANCE_NUMBER} \
+    --instance-set=${INSTANCE_SET} \
+    --parallelism=${THREADS} \
+    --results-log-detail=${LOG_DIR}logall.txt \
+    --results-log=${LOG_DIR}logbest.txt
     #--seed-configuration=${LOG_DIR}seed.json
     rm *.arff
     rm classify_*
