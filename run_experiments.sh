@@ -19,8 +19,8 @@ do
     --i=${INSTANCE_NUMBER} \
     --logdir=${LOG_DIR} \ 
     --bestlog=final_config_commands \
-    --log-best-data \ 
-    --seed-configuration=${LOG_DIR}seed.json
+    --log-best-data
+    #--seed-configuration=${LOG_DIR}seed.json
     rm *.arff
     rm classify_*
 done
