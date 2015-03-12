@@ -11,15 +11,6 @@ import linecache
 import os
 from subprocess import call
 
-solvers = {
-    '1': ccanr_glucose,
-    '2': glueSplit,
-    '3': lingeling,
-    '4': lingeling_druplig,
-    '5': riss,
-    '6': sparrow,
-}
-
 SOLVERS_DIR = 'solvers/'
 
 parser = argparse.ArgumentParser()
@@ -48,17 +39,24 @@ parser.add_argument('--solve-all',
     dest = 'solve_all',
     action = 'store_true',
     help = 'Solves all instances with a given solver.')
-parser.set_defaults(single=False)
-parser.set_defaults(solve_all=False)
+parser.add_argument('--debug',
+        dest = 'debug',
+        action = 'store_true',
+        help = 'Print commands and solver output.')
+parser.set_defaults(single = False)
+parser.set_defaults(solve_all = False)
+parser.set_defaults(debug = False)
 
 def ccanr_glucose(filename):
 
     cmd = SOLVERS_DIR + 'CCAnrglucose/CCAnr+glucose.sh '
     instance = filename
     args = ' 1 1000'
-    print cmd + instance + args
-    call(cmd + instance + args, shell=True)
-    #call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
+    if DEBUG:
+        print cmd + instance + args
+        call(cmd + instance + args, shell=True)
+    else:
+        call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
     return
 
 def glueSplit(filename):
@@ -66,9 +64,11 @@ def glueSplit(filename):
     cmd = SOLVERS_DIR + 'glueSplit/glueSplit_clasp '
     instance = filename
     args = ''
-    print cmd + instance + args
-    call(cmd + instance + args, shell=True)
-    #call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
+    if DEBUG:
+        print cmd + instance + args
+        call(cmd + instance + args, shell=True)
+    else:
+        call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
     return
 
 def lingeling(filename):
@@ -76,9 +76,11 @@ def lingeling(filename):
     cmd = SOLVERS_DIR + 'Lingeling/lingeling -v '
     instance = filename
     args = ''
-    print cmd + instance + args
-    call(cmd + instance + args, shell=True)
-    #call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
+    if DEBUG:
+        print cmd + instance + args
+        call(cmd + instance + args, shell=True)
+    else:
+        call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
     return
 
 def lingeling_druplig(filename):
@@ -86,9 +88,11 @@ def lingeling_druplig(filename):
     cmd = SOLVERS_DIR + 'Lingeling/lingeling -v --druplig '
     instance = filename
     args = ''
-    print cmd + instance + args
-    call(cmd + instance + args, shell=True)
-    #call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
+    if DEBUG:
+        print cmd + instance + args
+        call(cmd + instance + args, shell=True)
+    else:
+        call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
     return
 
 def riss(filename):
@@ -96,10 +100,12 @@ def riss(filename):
     cmd = SOLVERS_DIR + 'Riss/blackbox.sh '
     instance = filename
     args = ' .'
-    print cmd + instance + args
-    call(cmd + instance + args, shell=True)
-    #call(cmd + instance + args, stderr=open(os.devnull, 'wb'), 
-        stdout=open(os.devnull, 'wb'), shell=True)
+    if DEBUG:
+        print cmd + instance + args
+        call(cmd + instance + args, shell=True)
+    else:
+        call(cmd + instance + args, stderr=open(os.devnull, 'wb'), 
+            stdout=open(os.devnull, 'wb'), shell=True)
     return
 
 def sparrow(filename):
@@ -107,11 +113,22 @@ def sparrow(filename):
     cmd = SOLVERS_DIR + 'Sparrow/SparrowToRiss.sh '
     instance = filename
     args = ' 1 .'
-    print cmd + instance + args
-    call(cmd + instance + args, shell=True)
-    #call(cmd + instance + args, stderr=open(os.devnull, 'wb'),
-        stdout=open(os.devnull, 'wb'), shell=True)
+    if DEBUG:
+        print cmd + instance + args
+        call(cmd + instance + args, shell=True)
+    else:
+        call(cmd + instance + args, stderr=open(os.devnull, 'wb'),
+            stdout=open(os.devnull, 'wb'), shell=True)
     return
+
+solvers = {
+    '1': ccanr_glucose,
+    '2': glueSplit,
+    '3': lingeling,
+    '4': lingeling_druplig,
+    '5': riss,
+    '6': sparrow,
+}
 
 def solve_instance(solver, instance_path):
 
@@ -123,6 +140,7 @@ if __name__ == '__main__':
     single_solve = args.single
     solve_all = args.solve_all
     INSTANCES_DIR = args.benchmark
+    DEBUG = args.debug
 
     if single_solve:
 
@@ -150,7 +168,7 @@ if __name__ == '__main__':
         solved = 0
         while line != '':
 
-            solve_instance(selected, INSTANCES_DIR + line)
+            solve_instance(config[solved], INSTANCES_DIR + line)
             solved += 1
             line = instance_file.readline().rstrip()
 
