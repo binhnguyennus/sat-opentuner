@@ -11,6 +11,15 @@ import linecache
 import os
 from subprocess import call
 
+solvers = {
+    '1': ccanr_glucose,
+    '2': glueSplit,
+    '3': lingeling,
+    '4': lingeling_druplig,
+    '5': riss,
+    '6': sparrow,
+}
+
 SOLVERS_DIR = 'solvers/'
 
 parser = argparse.ArgumentParser()
@@ -104,83 +113,44 @@ def sparrow(filename):
         stdout=open(os.devnull, 'wb'), shell=True)
     return
 
-args = parser.parse_args()
+def solve_instance(solver, instance_path):
 
-single_solve = args.single
-solve_all = args.solve_all
-INSTANCES_DIR = args.benchmark
+    solvers[solver](instance_path)
 
-if single_solve:
+if __name__ == '__main__':
 
-    target = args.target
-    selected = args.selected
-    line = linecache.getline(args.file, int(target)).rstrip()
+    args = parser.parse_args()
+    single_solve = args.single
+    solve_all = args.solve_all
+    INSTANCES_DIR = args.benchmark
 
-    if (selected == '1'):
-        ccanr_glucose(INSTANCES_DIR + line)
-    elif (selected == '2'):
-        glueSplit(INSTANCES_DIR + line)
-    elif (selected == '3'):
-        lingeling(INSTANCES_DIR + line)
-    elif (selected == '4'):
-        lingeling_druplig(INSTANCES_DIR + line)
-    elif (selected == '5'):
-        riss(INSTANCES_DIR + line)
-    elif (selected == '6'):
-        sparrow(INSTANCES_DIR + line)
+    if single_solve:
+
+        target = args.target
+        selected = args.selected
+        line = linecache.getline(args.file, int(target)).rstrip()
+        solve_instance(selected, INSTANCES_DIR + line)
+        linecache.clearcache()
+
+    elif solve_all:
+
+        selected = args.selected
+        instance_file = open(args.file, 'r')
+        line = instance_file.readline().rstrip()            
+        while line != '':
+
+            solve_instance(selected, INSTANCES_DIR + line)
+            line = instance_file.readline().rstrip()
+
     else:
-        print 'ERROR: INVALID SOLVER ID!'
 
-    linecache.clearcache()
-
-elif solve_all:
-
-    selected = args.selected
-
-    instance_file = open(args.file, 'r')
-    line = instance_file.readline().rstrip()            
-
-    while line != '':
-
-        if (selected == '1'):
-            ccanr_glucose(INSTANCES_DIR + line)
-        elif (selected == '2'):
-            glueSplit(INSTANCES_DIR + line)
-        elif (selected == '3'):
-            lingeling(INSTANCES_DIR + line)
-        elif (selected == '4'):
-            lingeling_druplig(INSTANCES_DIR + line)
-        elif (selected == '5'):
-            riss(INSTANCES_DIR + line)
-        elif (selected == '6'):
-            sparrow(INSTANCES_DIR + line)
-
+        config = args.config
+        instance_file = open(args.file, 'r')
         line = instance_file.readline().rstrip()
+        solved = 0
+        while line != '':
 
-else:
-
-    config = args.config
-    instance_file = open(args.file, 'r')
-    line = instance_file.readline().rstrip()
-    solved = 0
-
-    while line != '':
-
-        if (config[solved] == '1'):
-            ccanr_glucose(INSTANCES_DIR + line)
-        elif (config[solved] == '2'):
-            glueSplit(INSTANCES_DIR + line)
-        elif (config[solved] == '3'):
-            lingeling(INSTANCES_DIR + line)
-        elif (config[solved] == '4'):
-            lingeling_druplig(INSTANCES_DIR + line)
-        elif (config[solved] == '5'):
-            riss(INSTANCES_DIR + line)
-        elif (config[solved] == '6'):
-            sparrow(INSTANCES_DIR + line)
-        else:
-            print 'ERROR: INVALID SOLVER ID!'
-            break
-        solved += 1
-        line = instance_file.readline().rstrip()
+            solve_instance(selected, INSTANCES_DIR + line)
+            solved += 1
+            line = instance_file.readline().rstrip()
 
