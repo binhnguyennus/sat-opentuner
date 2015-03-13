@@ -36,7 +36,7 @@ argparser.add_argument('--log-best-data',
         action = 'store_true',
         help = 'Saves the best configuration as a JSON file.')
 
-argparser.set_defaults(timeout = 9)
+argparser.set_defaults(timeout = 20)
 argparser.set_defaults(instance_number = 320)
 argparser.set_defaults(benchmark = 'instances/sat_lib/')
 argparser.set_defaults(instances = 'instance_set_3.txt')
@@ -45,9 +45,6 @@ argparser.set_defaults(log_best = False)
 class SATTuner(MeasurementInterface):
 
     def manipulator(self):
-        """
-        Defining the Search Space.
-        """
         manipulator = ConfigurationManipulator()
         param, l_min, l_max = SOLVERS
         for i in range (INSTANCES):
@@ -56,10 +53,6 @@ class SATTuner(MeasurementInterface):
         return manipulator
 
     def run(self, desired_result, input, limit):
-        """
-        Execute configuration,
-        return performance.
-        """
         cfg = desired_result.configuration.data
 
         param, l_min, l_max = SOLVERS
@@ -80,7 +73,6 @@ class SATTuner(MeasurementInterface):
         return Result(time=result)
 
     def save_final_config(self, configuration):
-        """called at the end of tuning"""
         cfg = configuration.data
 
         param, l_min, l_max = SOLVERS
@@ -96,20 +88,13 @@ class SATTuner(MeasurementInterface):
             cmd += ' ' + str(cfg[param + str(i)])
 
         print "Optimal config written to " + LOG_DIR + LOG_FILE + ": ", cmd
-        with open(LOG_DIR + LOG_FILE, 'w+') as f:
-            lines = 0
-            for lines, l in enumerate(f):
-                pass
-            lines += 2
-
-        with open(LOG_DIR + LOG_FILE, 'a') as myfile:
-            myfile.write("/usr/bin/time -p " + cmd + 
-                " &> " + LOG_DIR + "tuned{0}.txt".format(lines) + "\n")
+        with open(LOG_DIR + LOG_FILE, 'a+') as myfile:
+            myfile.write("/usr/bin/time -p " + cmd + "\n")
 
 if __name__ == '__main__':
     args = argparser.parse_args()
 
-    SOLVERS = ('i', 1, 6)
+    SOLVERS = ('i', 1, 4)
     INSTANCE_FILE = ' --instance-file ' + args.instances
     LOG_DIR = args.log_dir
     LOG_FILE = args.log_file

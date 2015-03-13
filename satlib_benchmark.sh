@@ -6,6 +6,7 @@
 RUNS=$1
 SOLVERS=$2
 LOG_DIR=$3
+INSTANCES=$4
 
 # Runs the benchmark for every solver, for
 # a given number of runs.
@@ -17,7 +18,7 @@ do
     do
         LOG="${LOG_DIR}benchmark_$i.txt"
         TIME=`/usr/bin/time --portability python2 sat_combinator.py \
-        --instance-file instance_set_3.txt --benchmark instances/sat_lib/ \
+        --instance-file ${INSTANCES} --benchmark instances/sat_lib/ \
         --solve-all --select-solver $i |& grep -oP '(?<=real )[0-9]*.[0-9]*'`
         echo "$TIME" >> ${LOG}
     done

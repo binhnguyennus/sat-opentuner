@@ -19,7 +19,8 @@ do
     --instance-set=${INSTANCE_SET} \
     --parallelism=${THREADS} \
     --results-log-detail=${LOG_DIR}logall.txt \
-    --results-log=${LOG_DIR}logbest.txt
+    --results-log=${LOG_DIR}logbest.txt \
+    --technique=test2
     #--seed-configuration=${LOG_DIR}seed.json
     rm *.arff
     rm classify_*
