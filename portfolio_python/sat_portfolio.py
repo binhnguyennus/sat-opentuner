@@ -1,16 +1,15 @@
+#! /usr/bin/python2
 import os
 import time
 import argparse
+import threading
 from subprocess import call
-from multiprocessing import Pool, Value, cpu_count
+from multiprocessing import cpu_count
 
 EXEC_DIR = 'sat-opentuner'
 SOLVERS_DIR = 'solvers/'
 INSTANCES_DIR = 'instances/sat_lib/'
-INSTANCES = 'instance_set_3.txt'
-
-WORKERS = []
-POOLS = []
+INSTANCES = 'instance_set_4.txt'
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--benchmark',
@@ -26,78 +25,71 @@ parser.add_argument('--debug',
     default = False,
     help = 'Print commands and solver output.')
 
-def ccanr_glucose(filename):
+class StoppableThread(threading.Thread):
+
+    def __init__(self,target,args):
+        super(StoppableThread, self).__init__()
+        self._target = target
+        self._args = args
+        self._stop = threading.Event()
+
+    def stop(self):
+        print 'stopped\n'
+        self._stop.set()
+
+    def stopped(self):
+        return self._stop.isSet()
+
+    def run(self):
+        for instance in self._args:
+            if self.stopped():
+                break
+            else:
+                self._target(instance)
+
+def ccanr_glucose(instance):
 
     cmd = SOLVERS_DIR + 'CCAnrglucose/CCAnr+glucose.sh '
-    instance = filename
     args = ' 1 1000'
-    if DEBUG:
-        print cmd + instance + args
-        call(cmd + instance + args, shell=True)
-    else:
-        call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
+    call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
     return
 
-def glueSplit(filename):
+def glueSplit(instance):
 
     cmd = SOLVERS_DIR + 'glueSplit/glueSplit_clasp '
-    instance = filename
     args = ''
-    if DEBUG:
-        print cmd + instance + args
-        call(cmd + instance + args, shell=True)
-    else:
-        call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
+    call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
     return
 
-def lingeling(filename):
+def lingeling(instance):
 
     cmd = SOLVERS_DIR + 'Lingeling/lingeling -v '
     instance = filename
     args = ''
-    if DEBUG:
-        print cmd + instance + args
-        call(cmd + instance + args, shell=True)
-    else:
-        call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
+    call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
     return
 
-def lingeling_druplig(filename):
+def lingeling_druplig(instance):
 
     cmd = SOLVERS_DIR + 'Lingeling/lingeling -v --druplig '
-    instance = filename
     args = ''
-    if DEBUG:
-        print cmd + instance + args
-        call(cmd + instance + args, shell=True)
-    else:
-        call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
+    call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
     return
 
-def riss(filename):
+def riss(instance):
 
     cmd = SOLVERS_DIR + 'Riss/blackbox.sh '
-    instance = filename
     args = ' .'
-    if DEBUG:
-        print cmd + instance + args
-        call(cmd + instance + args, shell=True)
-    else:
-        call(cmd + instance + args, stderr=open(os.devnull, 'wb'), 
-            stdout=open(os.devnull, 'wb'), shell=True)
+    call(cmd + instance + args, stderr=open(os.devnull, 'wb'), 
+        stdout=open(os.devnull, 'wb'), shell=True)
     return
 
-def sparrow(filename):
+def sparrow(instance):
 
     cmd = SOLVERS_DIR + 'Sparrow/SparrowToRiss.sh '
-    instance = filename
     args = ' 1 .'
-    if DEBUG:
-        print cmd + instance + args
-        call(cmd + instance + args, shell=True)
-    else:
-        call(cmd + instance + args, stderr=open(os.devnull, 'wb'),
-            stdout=open(os.devnull, 'wb'), shell=True)
+    call(cmd + instance + args, stderr=open(os.devnull, 'wb'),
+        stdout=open(os.devnull, 'wb'), shell=True)
     return
 
 solvers = {
@@ -109,21 +101,6 @@ solvers = {
     '6': sparrow,
 }
 
-def run_benchmark(solver, threads, lines):
-
-        pool = Pool(threads)
-        for line in lines:
-            pool.apply_async(solvers[solver], 
-                    args=(INSTANCES_DIR + line, ))
-
-        pool.close()
-        pool.join()
-
-def terminate_all_pools(result):
-
-    for pool in POOLS:
-        pool.terminate()
-        
 if __name__ == '__main__':
 
     PROJECT_DIR = os.getcwd().split(EXEC_DIR)[0]
@@ -136,21 +113,22 @@ if __name__ == '__main__':
     with open(INSTANCES, 'r') as instance_file:    
         lines = instance_file.read().splitlines()
 
+    lines = [INSTANCES_DIR + line for line in lines]
+
     if (int(benchmark_solver) > 0):
-        run_benchmark (benchmark_solver, threads, lines)
+        pass
 
     else:
-        POOLS.append(Pool(cpu_count()))
-        POOLS.append(Pool(cpu_count()))
 
-        WORKERS.append(POOLS[0].map_async(solvers['1'],
-            iterable=[INSTANCES_DIR + l for l in lines],
-            callback=terminate_all_pools))
-
-        WORKERS.append(POOLS[1].map_async(solvers['2'],
-            iterable=[INSTANCES_DIR + l for l in lines],
-            callback=terminate_all_pools))
-
-        for pool in POOLS:
-            pool.close()
-
+        test = StoppableThread(target = lingeling_druplig, args = lines)
+        test2 = StoppableThread(target = sparrow, args = lines)
+        test.start()
+        test2.start()
+        while True:
+            if not test.is_alive():
+                test2.stop()
+                break
+            elif not test2.is_alive():
+                test.stop()
+                break
+            time.sleep(0.01)
