@@ -6,11 +6,6 @@ import threading
 from subprocess import call
 from multiprocessing import cpu_count
 
-EXEC_DIR = 'sat-opentuner'
-SOLVERS_DIR = 'solvers/'
-INSTANCES_DIR = 'instances/sat_lib/'
-INSTANCES = 'instance_set_4.txt'
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--benchmark',
     dest = 'benchmark_solver', metavar = 's',
@@ -27,108 +22,141 @@ parser.add_argument('--debug',
 
 class StoppableThread(threading.Thread):
 
-    def __init__(self,target,args):
+    def __init__(self, target, args):
+
         super(StoppableThread, self).__init__()
         self._target = target
         self._args = args
         self._stop = threading.Event()
 
     def stop(self):
-        print 'stopped\n'
+
         self._stop.set()
 
     def stopped(self):
+
         return self._stop.isSet()
 
     def run(self):
+
         for instance in self._args:
             if self.stopped():
                 break
             else:
                 self._target(instance)
 
-def ccanr_glucose(instance):
+class Solver:
 
-    cmd = SOLVERS_DIR + 'CCAnrglucose/CCAnr+glucose.sh '
-    args = ' 1 1000'
-    call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
-    return
+    def solve(self, instance):
+        cmd = self.cmd + instance + self.cmd_args
+        if self.debug:
+            print cmd
+            call(cmd, shell=True)
+        else:
+            call(cmd, stderr=open(os.devnull, 'wb'), 
+                stdout=open(os.devnull, 'wb'), shell=True)
+        return
 
-def glueSplit(instance):
+    def create_threads(self):
 
-    cmd = SOLVERS_DIR + 'glueSplit/glueSplit_clasp '
-    args = ''
-    call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
-    return
+        for instance in self.instances:
+            self.threads.append(StoppableThread(target = self.solve, 
+                args = instance))
 
-def lingeling(instance):
+        print self.threads
+        return
 
-    cmd = SOLVERS_DIR + 'Lingeling/lingeling -v '
-    instance = filename
-    args = ''
-    call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
-    return
+    def start(self):
+        
+        for thread in self.threads:
+            thread.start()
+        return
 
-def lingeling_druplig(instance):
+    def is_alive(self):
 
-    cmd = SOLVERS_DIR + 'Lingeling/lingeling -v --druplig '
-    args = ''
-    call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
-    return
+        return any([thread.is_alive() for thread in self.threads])
 
-def riss(instance):
+    def stop(self):
 
-    cmd = SOLVERS_DIR + 'Riss/blackbox.sh '
-    args = ' .'
-    call(cmd + instance + args, stderr=open(os.devnull, 'wb'), 
-        stdout=open(os.devnull, 'wb'), shell=True)
-    return
+        for thread in self.threads:
+            thread.stop()
+        return
 
-def sparrow(instance):
+    def __init__(self, cmd, cmd_args, instances, debug):
 
-    cmd = SOLVERS_DIR + 'Sparrow/SparrowToRiss.sh '
-    args = ' 1 .'
-    call(cmd + instance + args, stderr=open(os.devnull, 'wb'),
-        stdout=open(os.devnull, 'wb'), shell=True)
-    return
+        self.cmd = cmd
+        self.cmd_args = cmd_args
+        self.instances = instances
+        self.threads = []
+        self.debug = debug
 
-solvers = {
-    '1': ccanr_glucose,
-    '2': glueSplit,
-    '3': lingeling,
-    '4': lingeling_druplig,
-    '5': riss,
-    '6': sparrow,
-}
+class Portfolio:
+
+    def stop(self):
+
+        for solver in self.solvers:
+            solver.stop()
+        return
+
+    def solve(self):
+        
+        for solver in self.solvers:
+            solver.create_threads()
+            solver.start()
+
+        solving = True
+        while solving:
+            time.sleep(0.01)
+            if any([(not solver.is_alive()) for solver in self.solvers]):
+                solving = False
+
+        self.stop()
+        return
+
+    def __init__(self, solver_names, instances_dir, instances, 
+            resource_sharing, debug):
+
+        with open(instances, 'r') as instance_file:
+            self.instances = instance_file.read().splitlines()
+
+        self.instances = [instances_dir + i for i in self.instances]
+        self.solver_names = solver_names
+        self.resource_sharing = resource_sharing
+        self.solvers = []
+        self.debug = debug
+
+        for i in range(len(self.resource_sharing)):
+            if (resource_sharing[i] > 0):
+                self.solvers.append(Solver(solver_names[i][0],
+                    solver_names[i][1],
+                    zip(*[iter(self.instances)] * (len(self.instances) / resource_sharing[i])),
+                    self.debug))
+        print self.solvers
 
 if __name__ == '__main__':
 
-    PROJECT_DIR = os.getcwd().split(EXEC_DIR)[0]
-    os.chdir(PROJECT_DIR + EXEC_DIR)
+    exec_dir = 'sat-opentuner'
+    solvers_dir = 'solvers/'
+    instances_dir = 'instances/sat_lib/'
+    instances = 'instance_set_4.txt'
+
+    project_dir = os.getcwd().split(exec_dir)[0]
+    os.chdir(project_dir + exec_dir)
     args = parser.parse_args()
 
-    benchmark_solver = args.benchmark_solver
-    threads = int(args.threads)
+    debug = args.debug
 
-    with open(INSTANCES, 'r') as instance_file:    
-        lines = instance_file.read().splitlines()
+    solvers = [(solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh ', ' 1 1000'),
+            (solvers_dir + 'glueSplit/glueSplit_clasp ', ''),
+            (solvers_dir + 'Lingeling/lingeling -v ', ''),
+            (solvers_dir + 'Lingeling/lingeling -v --druplig ', ''),
+            (solvers_dir + 'Riss/blackbox.sh ', ' .'),
+            (solvers_dir + 'Sparrow/SparrowToRiss.sh ', ' 1 .')]
+    resource_sharing = [0, 0, 0, 10, 0, 0]
 
-    lines = [INSTANCES_DIR + line for line in lines]
-
-    if (int(benchmark_solver) > 0):
-        pass
-
-    else:
-
-        test = StoppableThread(target = lingeling_druplig, args = lines)
-        test2 = StoppableThread(target = sparrow, args = lines)
-        test.start()
-        test2.start()
-        while True:
-            if not test.is_alive():
-                test2.stop()
-                break
-            elif not test2.is_alive():
-                test.stop()
-                break
-            time.sleep(0.01)
+    portfolio = Portfolio(solvers,
+            instances_dir,
+            instances,
+            resource_sharing,
+            debug)
+    portfolio.solve()
