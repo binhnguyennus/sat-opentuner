@@ -21,24 +21,19 @@ parser.add_argument('--debug',
     help = 'Print commands and solver output.')
 
 class StoppableThread(threading.Thread):
-
     def __init__(self, target, args):
-
         super(StoppableThread, self).__init__()
         self._target = target
         self._args = args
         self._stop = threading.Event()
 
     def stop(self):
-
         self._stop.set()
 
     def stopped(self):
-
         return self._stop.isSet()
 
     def run(self):
-
         for instance in self._args:
             if self.stopped():
                 break
@@ -46,7 +41,6 @@ class StoppableThread(threading.Thread):
                 self._target(instance)
 
 class Solver:
-
     def solve(self, instance):
         cmd = self.cmd + instance + self.cmd_args
         if self.debug:
@@ -58,32 +52,26 @@ class Solver:
         return
 
     def create_threads(self):
-
         for instance in self.instances:
             self.threads.append(StoppableThread(target = self.solve, 
                 args = instance))
-
         print self.threads
         return
 
     def start(self):
-        
         for thread in self.threads:
             thread.start()
         return
 
     def is_alive(self):
-
         return any([thread.is_alive() for thread in self.threads])
 
     def stop(self):
-
         for thread in self.threads:
             thread.stop()
         return
 
     def __init__(self, cmd, cmd_args, instances, debug):
-
         self.cmd = cmd
         self.cmd_args = cmd_args
         self.instances = instances
@@ -91,15 +79,12 @@ class Solver:
         self.debug = debug
 
 class Portfolio:
-
     def stop(self):
-
         for solver in self.solvers:
             solver.stop()
         return
 
     def solve(self):
-        
         for solver in self.solvers:
             solver.create_threads()
             solver.start()
@@ -115,7 +100,6 @@ class Portfolio:
 
     def __init__(self, solver_names, instances_dir, instances, 
             resource_sharing, debug):
-
         with open(instances, 'r') as instance_file:
             self.instances = instance_file.read().splitlines()
 
@@ -152,6 +136,7 @@ if __name__ == '__main__':
             (solvers_dir + 'Lingeling/lingeling -v --druplig ', ''),
             (solvers_dir + 'Riss/blackbox.sh ', ' .'),
             (solvers_dir + 'Sparrow/SparrowToRiss.sh ', ' 1 .')]
+
     resource_sharing = [0, 0, 0, 10, 0, 0]
 
     portfolio = Portfolio(solvers,
@@ -159,4 +144,5 @@ if __name__ == '__main__':
             instances,
             resource_sharing,
             debug)
+    
     portfolio.solve()
