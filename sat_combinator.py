@@ -47,18 +47,6 @@ parser.set_defaults(single = False)
 parser.set_defaults(solve_all = False)
 parser.set_defaults(debug = False)
 
-def ccanr_glucose(filename):
-
-    cmd = SOLVERS_DIR + 'CCAnrglucose/CCAnr+glucose.sh '
-    instance = filename
-    args = ' 1 1000'
-    if DEBUG:
-        print cmd + instance + args
-        call(cmd + instance + args, shell=True)
-    else:
-        call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
-    return
-
 def glueSplit(filename):
 
     cmd = SOLVERS_DIR + 'glueSplit/glueSplit_clasp '
@@ -88,24 +76,11 @@ def lingeling_druplig(filename):
     cmd = SOLVERS_DIR + 'Lingeling/lingeling -v --druplig '
     instance = filename
     args = ''
-    if DEBUG:
+    if (DEBUG):
         print cmd + instance + args
         call(cmd + instance + args, shell=True)
     else:
         call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
-    return
-
-def riss(filename):
-
-    cmd = SOLVERS_DIR + 'Riss/blackbox.sh '
-    instance = filename
-    args = ' .'
-    if DEBUG:
-        print cmd + instance + args
-        call(cmd + instance + args, shell=True)
-    else:
-        call(cmd + instance + args, stderr=open(os.devnull, 'wb'), 
-            stdout=open(os.devnull, 'wb'), shell=True)
     return
 
 def sparrow(filename):
@@ -121,13 +96,67 @@ def sparrow(filename):
             stdout=open(os.devnull, 'wb'), shell=True)
     return
 
+def minisat_blbd(filename):
+
+    cmd = SOLVERS_DIR + 'minisat_blbd/minisat_blbd '
+    instance = filename
+    args = ''
+    if DEBUG:
+        print cmd + instance + args
+        call(cmd + instance + args, shell=True)
+    else:
+        call(cmd + instance + args, stderr=open(os.devnull, 'wb'), 
+            stdout=open(os.devnull, 'wb'), shell=True)
+    return
+
+def sgseq(filename):
+
+    cmd = SOLVERS_DIR + 'SGSeq/SGSeq.sh '
+    instance = filename
+    args = ''
+    if DEBUG:
+        print cmd + instance + args
+        call(cmd + instance + args, shell=True)
+    else:
+        call(cmd + instance + args, stderr=open(os.devnull, 'wb'), 
+            stdout=open(os.devnull, 'wb'), shell=True)
+    return
+
+def glucose(filename):
+
+    cmd = SOLVERS_DIR + 'glucose/glucose '
+    instance = filename
+    args = ''
+    if DEBUG:
+        print cmd + instance + args
+        call(cmd + instance + args, shell=True)
+    else:
+        call(cmd + instance + args, stderr=open(os.devnull, 'wb'), 
+            stdout=open(os.devnull, 'wb'), shell=True)
+    return
+
+def cryptominisat(filename):
+
+    cmd = SOLVERS_DIR + 'cryptominisat/cryptominisat '
+    instance = filename
+    args = ''
+    if DEBUG:
+        print cmd + instance + args
+        call(cmd + instance + args, shell=True)
+    else:
+        call(cmd + instance + args, stderr=open(os.devnull, 'wb'), 
+            stdout=open(os.devnull, 'wb'), shell=True)
+    return
+
 solvers = {
-    '1': ccanr_glucose,
-    '2': glueSplit,
-    '3': lingeling,
-    '4': lingeling_druplig,
-    '5': riss,
-    '6': sparrow,
+    '1' : glueSplit,
+    '2' : lingeling,
+    '3' : lingeling_druplig,
+    '4' : sparrow,
+    '5' : minisat_blbd,
+    '6' : sgseq,
+    '7' : glucose,
+    '8' : cryptominisat,
 }
 
 def solve_instance(solver, instance_path):
@@ -154,9 +183,9 @@ if __name__ == '__main__':
 
         selected = args.selected
         instance_file = open(args.file, 'r')
-        line = instance_file.readline().rstrip()            
+        line = instance_file.readline().rstrip() 
         while line != '':
-
+            
             solve_instance(selected, INSTANCES_DIR + line)
             line = instance_file.readline().rstrip()
 
