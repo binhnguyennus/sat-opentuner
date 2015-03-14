@@ -4,21 +4,6 @@ import time
 import argparse
 import threading
 from subprocess import call
-from multiprocessing import cpu_count
-
-parser = argparse.ArgumentParser()
-parser.add_argument('--benchmark',
-    dest = 'benchmark_solver', metavar = 's',
-    default = '0',
-    help = 'The solver to benchmark.')
-parser.add_argument('--threads',
-    dest = 'threads', metavar = 't',
-    default = cpu_count(),
-    help = 'The size of the thread Pool.')
-parser.add_argument('--debug',
-    action = 'store_true',
-    default = False,
-    help = 'Print commands and solver output.')
 
 class StoppableThread(threading.Thread):
     def __init__(self, target, args):
@@ -117,27 +102,37 @@ class Portfolio:
                     self.debug))
         print self.solvers
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-d', '--debug',
+    action = 'store_true',
+    default = False,
+    help = 'Print commands and solver output.')
+
+exec_dir = 'sat-opentuner'
+project_dir = os.getcwd().split(exec_dir)[0]
+os.chdir(project_dir + exec_dir)
+
 if __name__ == '__main__':
 
-    exec_dir = 'sat-opentuner'
     solvers_dir = 'solvers/'
     instances_dir = 'instances/sat_lib/'
     instances = 'instance_set_4.txt'
 
-    project_dir = os.getcwd().split(exec_dir)[0]
-    os.chdir(project_dir + exec_dir)
     args = parser.parse_args()
 
     debug = args.debug
 
-    solvers = [(solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh ', ' 1 1000'),
-            (solvers_dir + 'glueSplit/glueSplit_clasp ', ''),
+    solvers = [(solvers_dir + 'glueSplit/glueSplit_clasp ', ''),
             (solvers_dir + 'Lingeling/lingeling -v ', ''),
             (solvers_dir + 'Lingeling/lingeling -v --druplig ', ''),
-            (solvers_dir + 'Riss/blackbox.sh ', ' .'),
-            (solvers_dir + 'Sparrow/SparrowToRiss.sh ', ' 1 .')]
+            (solvers_dir + 'Sparrow/SparrowToRiss.sh ', ' 1 .'),
+            (solvers_dir + 'minisat_blbd/minisat_blbd ', ''),
+            (solvers_dir + 'SGSeq/SGSeq.sh ', ''),
+            (solvers_dir + 'glucose/glucose ', ''),
+            (solvers_dir + 'cryptominisat/cryptominisat ', ''),
+            (solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh ', ' 1 1000')]
 
-    resource_sharing = [0, 0, 0, 10, 0, 0]
+    resource_sharing = [0, 0, 0, 0, 0, 0, 0, 0, 8]
 
     portfolio = Portfolio(solvers,
             instances_dir,

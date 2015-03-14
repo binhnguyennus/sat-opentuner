@@ -43,7 +43,6 @@ argparser.set_defaults(instances = 'instance_set_3.txt')
 argparser.set_defaults(log_best = False)
 
 class SATTuner(MeasurementInterface):
-
     def manipulator(self):
         manipulator = ConfigurationManipulator()
         param, l_min, l_max = SOLVERS
@@ -59,9 +58,7 @@ class SATTuner(MeasurementInterface):
 
         cmd = CMD
         cmd += INSTANCE_FILE + BENCHMARK + CONFIG
-
         for i in range (INSTANCES):
-
             cmd += ' ' + str(cfg[param + str(i)])
 
         run_result = self.call_program(cmd, limit=TIMEOUT)
@@ -69,7 +66,6 @@ class SATTuner(MeasurementInterface):
             result = TIMEOUT
         else:
             result = run_result['time']
-
         return Result(time=result)
 
     def save_final_config(self, configuration):
@@ -78,13 +74,11 @@ class SATTuner(MeasurementInterface):
         param, l_min, l_max = SOLVERS
         cmd = CMD
         cmd += INSTANCE_FILE + BENCHMARK + CONFIG
-
         if (LOG_BEST):
             print "Optimal configuration written to 'final_config.json'."
             self.manipulator().save_to_file(cfg, LOG_DIR + 'final_config.json')
 
         for i in range (INSTANCES):
-
             cmd += ' ' + str(cfg[param + str(i)])
 
         print "Optimal config written to " + LOG_DIR + LOG_FILE + ": ", cmd
@@ -104,7 +98,5 @@ if __name__ == '__main__':
     CMD = 'python sat_combinator.py'
     INSTANCES = int(args.instance_number)
     TIMEOUT = int(args.timeout)
-
-    print INSTANCES, INSTANCE_FILE
 
     SATTuner.main(args)
