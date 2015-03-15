@@ -5,57 +5,72 @@
 import adddeps
 import opentuner
 import argparse
-from opentuner import ConfigurationManipulator, EnumParameter, MeasurementInterface, Result
+from opentuner import ConfigurationManipulator, EnumParameter
+from opentuner import MeasurementInterface, Result, ParameterArray
 
 class PortfolioManipulator(ConfigurationManipulator):
-    def __init__(self):
+    def __init__(self, max_sum):
+        self._max_sum = max_sum 
         super(PortfolioManipulator, self).__init__()
 
     def validate(self, config):
-        values = config.data.values()
-        return not (sum(values) > 10 or all([v == 0 for v in values]))
+        values = config.values()
+        return not (sum(values) > self._max_sum or 
+                    all([v == 0 for v in values]))
+
+    def random(self):
+        cfg = self.seed_config()
+        while (not self.validate(cfg)):
+            for p in self.parameters(cfg):
+                p.op1_randomize(cfg)
+        return cfg
 
 class PortfolioTuner(MeasurementInterface):
     def manipulator(self):
-        self.manipulator = PortfolioManipulator()
-        values = [0, 1, 2, 5, 8, 10]
-        name = 'solver_'
-        for i in range (9):
-            self.manipulator.add_parameter(EnumParameter(name+str(i), values))
-        return self.manipulator
+        self._manipulator = PortfolioManipulator(self._max_sum)
+        for i in range (self._solvers):
+            self._manipulator.add_parameter(EnumParameter(self._names + str(i),
+                                                          self._values))
+        return self._manipulator
 
     def run(self, desired_result, input, limit):
         cfg = desired_result.configuration.data
-        cmd = CMD
-        name = 'solver_'
-
-        for i in range(9):
-            cmd += ' ' + str(cfg[name + str(i)])
-
-        if (self.manipulator.validate(desired_result.configuration)):
-            run_result = self.call_program(cmd)
-            result = run_result['time']
+        if (self._manipulator.validate(cfg)):
+            cmd = self._cmd
+            for i in range(self._solvers):
+                cmd += ' ' + str(cfg[self._names + str(i)])
+            result = self.call_program(cmd, limit = self._timeout)['time']
         else:
-            result = 99999999 
-
+            result = self._timeout
         return Result(time = result)
 
     def save_final_config(self, configuration):
         cfg = configuration.data
-        cmd = CMD
-        name = 'solver_'
+        cmd = self._cmd
 
-        for i in range(9):
-            cmd += ' ' + str(cfg[name + str(i)])
+        for i in range(self._solvers):
+            cmd += ' ' + str(cfg[self._names + str(i)])
 
         print 'Optimal config written to optimal.txt: ', cmd
         with open('optimal.txt', 'a+') as myfile:
             myfile.write("/usr/bin/time -p " + cmd + "\n")
 
+    @classmethod
+    def init(self, max_sum, solvers, values, timeout, cmd):
+        self._max_sum = max_sum
+        self._solvers = solvers
+        self._values = values
+        self._timeout = timeout
+        self._names = 'solver_'
+        self._cmd = cmd
+
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser(parents=opentuner.argparsers())
-    args = argparser.parse_args()
+    _args = argparser.parse_args()
 
-    CMD = 'python sat_solver.py -rs'
-
-    PortfolioTuner.main(args)
+    PortfolioTuner.init(max_sum = 8,
+                        solvers = 9,
+                        values = [0, 1, 2, 5],
+                        timeout = 120,
+                        cmd = 'python sat_solver.py -rs')
+    PortfolioTuner.main(_args)
