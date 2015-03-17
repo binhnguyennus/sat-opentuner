@@ -39,7 +39,7 @@ class Benchmark:
         return self._solver
 
     def instance(self):
-        return self.instance
+        return self._instance
 
     def __init__(self, values, solver, instance):
         self._solver = solver
@@ -56,7 +56,7 @@ class Solver:
             self._solve(instance)
             times.append(time.time() - start)
 
-        return Benchmark(times, self.name, instance)
+        return Benchmark(times, self._name, instance)
 
     def _solve(self, instance):
         cmd = self._cmd + instance + self._args
@@ -77,9 +77,23 @@ class Solver:
         self._debug = debug
 
 class Searcher:
-    def benchmark():
+    def find_best(self):
+        best = []
+        for benchmark in self._instance_benchmarks:
+            averages = [solver.average() for solver in benchmark]
+            min_index = 0
+            for i in range(1, len(averages)):
+                if (averages[i] < averages[min_index]):
+                    min_index = i
+
+            best_b = benchmark[min_index]
+            best.append([best_b.solver(), best_b.instance(), best_b.average()])
+
+        return best            
+
+    def benchmark(self):
         for i in range(len(self._instances)):
-            if self_debug:
+            if self._debug:
                 print '> Starting Benchmark of instance ' + self._instances[i] + ':'
             self._instance_benchmarks.append([])
             for solver in self._solvers:
@@ -90,20 +104,20 @@ class Searcher:
                 if self._debug:
                     print '>    Done.'
 
-    def __init__(self, solver_names, instances_dir, instances, runs, debug):
+    def __init__(self, solver_names, instances_dir, instances, runs, debug1, debug2):
         with open(instances, 'r') as instance_file:
             self._instances = instance_file.read().splitlines()
 
         self._instances = [instances_dir + i for i in self._instances]
         self._solver_names = solver_names
         self._runs = runs
-        self._debug = debug
+        self._debug = debug1
 
         self._solvers = []
         self._instance_benchmarks = []
         for i in range(len(solver_names)):
             self._solvers.append(Solver(solver_names[i][0], solver_names[i][0],
-                                        solver_names[i][1], debug))
+                                        solver_names[i][1], debug2))
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-id', '--instance-directory', 
@@ -122,24 +136,40 @@ parser.add_argument('-r', '--runs',
     dest = 'runs',
     default = '20',
     help = 'The number of runs in the benchmarks.')
-parser.add_argument('-d', '--debug',
-    dest = 'debug',
+parser.add_argument('-v', '--debug1',
+    dest = 'debug1',
     action = 'store_true',
     default = False,
-    help = 'Print debugging messages.')
+    help = 'Print debugging messages for the Brute Force Searcher.')
+parser.add_argument('-vv', '--debug2',
+    dest = 'debug2',
+    action = 'store_true',
+    default = False,
+    help = 'Print debugging messages for the solvers.')
+parser.add_argument('-vvv', '--debug3',
+    dest = 'debug3',
+    action = 'store_true',
+    default = False,
+    help = 'Print all debugging messages. (VERY verbose)')
 
 exec_dir = 'sat-opentuner'
 project_dir = os.getcwd().split(exec_dir)[0]
 os.chdir(project_dir + exec_dir)
 
-if __name__ == '__main__':
+args = parser.parse_args()
+solvers_dir = args.solvers_dir
+instances_dir = args.instances_dir
+instances = args.instances
+runs = int(args.runs)
+debug1 = args.debug1
+debug2 = args.debug2
+debug3 = args.debug3
 
-    args = parser.parse_args()
-    solvers_dir = args.solvers_dir
-    instances_dir = args.instances_dir
-    instances = args.instances
-    runs = args.runs
-    debug = args.debug
+if debug3:
+    debug1 = debug3
+    debug2 = debug3
+
+if __name__ == '__main__':
 
     solver_ids = [(solvers_dir + 'glueSplit/glueSplit_clasp ', ''),
                   (solvers_dir + 'Lingeling/lingeling -v ', ''),
@@ -151,4 +181,8 @@ if __name__ == '__main__':
                   (solvers_dir + 'cryptominisat/cryptominisat ', ''),
                   (solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh ', ' 1 1000')]
 
-    searcher = Searcher(solver_ids, instances_dir, instances, runs, debug)
+    searcher = Searcher(solver_ids, instances_dir, instances, runs, debug1, debug2)
+    searcher.benchmark()
+    best = searcher.find_best()
+    for b in best:
+        print b
