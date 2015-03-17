@@ -3,11 +3,11 @@ from sat_portfolio import *
 if __name__ == '__main__':
     parser.add_argument('-id', '--instance-directory', 
         dest = 'instances_dir',
-        default = 'instances/sat_unsat/',
+        default = 'instances/sat_lib/',
         help = 'The directory containing instances to be solved.')
     parser.add_argument('-f', '--instance-file',
         dest = 'instances',
-        default = 'instance_set_5.txt',
+        default = 'instance_set_3.txt',
         help = 'The file with the names of the selected instances.')
     parser.add_argument('-s', '--solvers-directory',
         dest = 'solvers_dir',

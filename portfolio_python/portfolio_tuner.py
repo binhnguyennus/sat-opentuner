@@ -70,7 +70,7 @@ if __name__ == '__main__':
 
     PortfolioTuner.init(max_sum = 8,
                         solvers = 9,
-                        values = [0, 1, 2, 5],
-                        timeout = 120,
+                        values = [0, 1, 2, 5, 8],
+                        timeout = 4,
                         cmd = 'python sat_solver.py -rs')
     PortfolioTuner.main(_args)
