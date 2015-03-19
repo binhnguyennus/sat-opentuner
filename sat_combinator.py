@@ -155,8 +155,8 @@ solvers = {
     '4' : sparrow,
     '5' : minisat_blbd,
     '6' : sgseq,
-    '7' : glucose,
-    '8' : cryptominisat,
+    '7' : cryptominisat,
+    '8' : glucose,
 }
 
 def solve_instance(solver, instance_path):

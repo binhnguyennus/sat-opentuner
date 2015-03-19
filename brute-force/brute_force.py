@@ -1,10 +1,10 @@
 #! /usr/bin/env python2
 #
-# A combinator of SAT solvers.
+# Brute Force Searcher for a 
+# set of instances and solvers.
 #
-# Reads a sequence of SAT solvers,
-# and an instance file. Solves the
-# instances with the respective Solvers.
+# Outputs the best configuration
+# to a file.
 #
 import argparse
 import linecache
@@ -77,8 +77,16 @@ class Solver:
         self._debug = debug
 
 class Searcher:
+    def log(self):
+        times =  open('brute-force/logtimes.txt', 'w+')
+        configuration = open('brute-force/logconfig.txt', 'w+')
+        for b in self._best:
+            times.write(', '.join(map(str,b)) + '\n')
+            configuration.write(str(solvers[b[0]]) + ' ')
+
     def find_best(self):
-        best = []
+        print '> Finding best solver for each instance.'
+        self._best = []
         for benchmark in self._instance_benchmarks:
             averages = [solver.average() for solver in benchmark]
             min_index = 0
@@ -87,32 +95,40 @@ class Searcher:
                     min_index = i
 
             best_b = benchmark[min_index]
-            best.append([best_b.solver(), best_b.instance(), best_b.average()])
+            self._best.append([best_b.solver(), best_b.instance(), best_b.average()])
 
-        return best            
+        print '> Done.'
+        return self._best            
 
     def benchmark(self):
+        print '> Starting Benchmarks.'
         for i in range(len(self._instances)):
+            print '> Solving instance: {0}'.format(i)
             if self._debug:
-                print '> Starting Benchmark of instance ' + self._instances[i] + ':'
+                print '> Starting Benchmark of instance {0} :'.format(self._instances[i])
             self._instance_benchmarks.append([])
             for solver in self._solvers:
                 if self._debug:
-                    print '>    With solver ' + solver.name() + '.' 
+                    print '>    With solver {0}.'.format(solver.name())
                 self._instance_benchmarks[i].append(
                         solver.benchmark(self._instances[i], self._runs))
                 if self._debug:
                     print '>    Done.'
 
+        print '> Done.'
+
     def __init__(self, solver_names, instances_dir, instances, runs, debug1, debug2):
         with open(instances, 'r') as instance_file:
             self._instances = instance_file.read().splitlines()
 
+        print '> Initializing Brute Force Searcher.'
+        print '>    Number of runs in each benchmark: {0}'.format(runs)
         self._instances = [instances_dir + i for i in self._instances]
         self._solver_names = solver_names
         self._runs = runs
         self._debug = debug1
 
+        self._best = []
         self._solvers = []
         self._instance_benchmarks = []
         for i in range(len(solver_names)):
@@ -177,12 +193,24 @@ if __name__ == '__main__':
                   (solvers_dir + 'Sparrow/SparrowToRiss.sh ', ' 1 .'),
                   (solvers_dir + 'minisat_blbd/minisat_blbd ', ''),
                   (solvers_dir + 'SGSeq/SGSeq.sh ', ''),
-                  (solvers_dir + 'glucose/glucose ', ''),
+#                 (solvers_dir + 'glucose/glucose ', ''),
                   (solvers_dir + 'cryptominisat/cryptominisat ', ''),
                   (solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh ', ' 1 1000')]
+
+    solvers = {
+        solvers_dir + 'glueSplit/glueSplit_clasp '        : 1,
+        solvers_dir + 'Lingeling/lingeling -v '           : 2,
+        solvers_dir + 'Lingeling/lingeling -v --druplig ' : 3,
+        solvers_dir + 'Sparrow/SparrowToRiss.sh '         : 4,
+        solvers_dir + 'minisat_blbd/minisat_blbd '        : 5,
+        solvers_dir + 'SGSeq/SGSeq.sh '                   : 6,
+        solvers_dir + 'cryptominisat/cryptominisat '      : 7,
+        solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh '    : 8,
+#       solvers_dir + 'glucose/glucose '                  : 9,
+        }
+
 
     searcher = Searcher(solver_ids, instances_dir, instances, runs, debug1, debug2)
     searcher.benchmark()
     best = searcher.find_best()
-    for b in best:
-        print b
+    searcher.log()
