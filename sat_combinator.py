@@ -11,193 +11,170 @@ import linecache
 import os
 from subprocess import call
 
-SOLVERS_DIR = 'solvers/'
+class Solver:
+    def solve(self, instance):
+        cmd = self._cmd + instance + self._args
+        if self._debug:
+            print cmd
+            call(cmd, shell = True)
+        else:
+            call(cmd, stderr = open(os.devnull, 'wb'),
+                 stdout = open(os.devnull, 'wb'), shell = True)
+
+    def solve_all(self, instances):
+        for instance in instances:
+            self.solve(instance)
+
+    def name(self):
+        return self._name
+
+    def __init__(self, name, cmd, args, debug):
+        self._name = name
+        self._cmd = cmd
+        self._args = args
+        self._debug = debug
+
+class Combinator:
+    def _combination(self, combination):
+        if self._debug:
+            print '> Starting to solve a combination.'
+
+        for i in range(len(combination)):
+            if self._debug:
+                print '    > Solving instance {0} with solver {1}.'.format(self._instances[i], self._solvers[int(combination[i])].name())
+            self._solvers[int(combination[i])].solve(self._instances[i])
+
+    def _all(self, solver):
+        if self._debug:
+            print '> Starting to solve all instances with solver {0}.'.format(self._solvers[solver].name())
+        self._solvers[solver].solve_all(self._instances)
+
+    def _single(self, solver, target_instance):
+        if self._debug:
+            print '> Starting to solve instance {0} with solver {1}.'.format(self._instances[target_instance], self._solvers[solver].name())
+        self._solvers[solver].solve(self._instances[target_instance])
+
+    def solve(self, combination = None, solver = None, target_instance = None):
+        if combination:
+            self._combination(combination)
+        elif self._solve_all:
+            self._all(solver)
+        elif self._single_solve:
+            self._single(solver, target_instance)
+            
+    def __init__(self, solver_names, instances, 
+                 instances_dir, single_solve, 
+                 solve_all, debug1, debug2):
+        with open(instances, 'r') as instance_file:
+            self._instances = instance_file.read().splitlines()
+
+        self._instances = [instances_dir + i for i in self._instances]
+        self._solver_names = solver_names
+        self._debug = debug1
+        self._solve_all = solve_all
+        self._single_solve = single_solve
+
+        self._solvers = []
+        for i in range(len(solver_names)):
+            self._solvers.append(Solver(solver_names[i][0], solver_names[i][0],
+                                        solver_names[i][1], debug2))
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--solver-config', nargs = '+',
-    dest = 'config', metavar = 'c', 
+parser.add_argument('-c', '--solver-config', nargs = '+',
+    dest = 'config',
+    default = None,
     help = 'A sequence of integers specifying a solver sequence.')
-parser.add_argument('--instance-file',
-    dest = 'file', metavar = 'f',
-    required = True,
+parser.add_argument('-f', '--instance-file',
+    dest = 'instances',
+    default = 'sets/instance_set_3.txt',
     help = 'A file containing a subset of instances to solve.')
-parser.add_argument('--single-solve',
+parser.add_argument('-sg', '--single-solve',
     dest = 'single',
     action = 'store_true',
+    default = False,
     help = 'Solves a single instance with a given solver.')
-parser.add_argument('--target-instance',
-    dest = 'target', metavar = 't',
+parser.add_argument('-t', '--target-instance',
+    dest = 'target',
     help = 'The instance to solve. (only when --single-solve is passed)')
-parser.add_argument('--select-solver',
-    dest = 'selected', metavar = 's',
+parser.add_argument('-ss', '--select-solver',
+    dest = 'selected', 
     help = 'The solver to be used. (only when --single-solver is passed)')
-parser.add_argument('--benchmark',
-    dest = 'benchmark', metavar = 'b',
-    required = True,
+parser.add_argument('-id', '--instance-directory',
+    dest = 'instances_dir',
+    default = 'instances/sat_lib/',
     help = 'The directory with all instances to solve.')
-parser.add_argument('--solve-all',
+parser.add_argument('-sa', '--solve-all',
     dest = 'solve_all',
     action = 'store_true',
+    default = False,
     help = 'Solves all instances with a given solver.')
-parser.add_argument('--debug',
-        dest = 'debug',
-        action = 'store_true',
-        help = 'Print commands and solver output.')
-parser.set_defaults(single = False)
-parser.set_defaults(solve_all = False)
-parser.set_defaults(debug = False)
+parser.add_argument('-s', '--solvers-directory',
+    dest = 'solvers_dir',
+    default = 'solvers/',
+    help = 'The directory containing the solver binaries.')
+parser.add_argument('-v', '--debug1',
+    dest = 'debug1',
+    action = 'store_true',
+    default = False,
+    help = 'Print debugging messages for the Combinator.')
+parser.add_argument('-vv', '--debug2',
+    dest = 'debug2',
+    action = 'store_true',
+    default = False,
+    help = 'Print debugging messages for the solvers.')
+parser.add_argument('-vvv', '--debug3',
+    dest = 'debug3',
+    action = 'store_true',
+    default = False,
+    help = 'Print all debugging messages. (VERY verbose)')
 
-def glueSplit(filename):
+exec_dir = 'sat-opentuner'
+project_dir = os.getcwd().split(exec_dir)[0]
+os.chdir(project_dir + exec_dir)
 
-    cmd = SOLVERS_DIR + 'glueSplit/glueSplit_clasp '
-    instance = filename
-    args = ''
-    if DEBUG:
-        print cmd + instance + args
-        call(cmd + instance + args, shell=True)
-    else:
-        call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
-    return
+args = parser.parse_args()
+solvers_dir = args.solvers_dir
+instances = args.instances
+instances_dir = args.instances_dir
+target_instance = int(args.target)
+config = args.config
+single_solve = args.single
+solve_all = args.solve_all
+selected = int(args.selected)
+debug1 = args.debug1
+debug2 = args.debug2
+debug3 = args.debug3
 
-def lingeling(filename):
-
-    cmd = SOLVERS_DIR + 'Lingeling/lingeling -v '
-    instance = filename
-    args = ''
-    if DEBUG:
-        print cmd + instance + args
-        call(cmd + instance + args, shell=True)
-    else:
-        call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
-    return
-
-def lingeling_druplig(filename):
-
-    cmd = SOLVERS_DIR + 'Lingeling/lingeling -v --druplig '
-    instance = filename
-    args = ''
-    if (DEBUG):
-        print cmd + instance + args
-        call(cmd + instance + args, shell=True)
-    else:
-        call(cmd + instance + args, stdout=open(os.devnull, 'wb'), shell=True)
-    return
-
-def sparrow(filename):
-
-    cmd = SOLVERS_DIR + 'Sparrow/SparrowToRiss.sh '
-    instance = filename
-    args = ' 1 .'
-    if DEBUG:
-        print cmd + instance + args
-        call(cmd + instance + args, shell=True)
-    else:
-        call(cmd + instance + args, stderr=open(os.devnull, 'wb'),
-            stdout=open(os.devnull, 'wb'), shell=True)
-    return
-
-def minisat_blbd(filename):
-
-    cmd = SOLVERS_DIR + 'minisat_blbd/minisat_blbd '
-    instance = filename
-    args = ''
-    if DEBUG:
-        print cmd + instance + args
-        call(cmd + instance + args, shell=True)
-    else:
-        call(cmd + instance + args, stderr=open(os.devnull, 'wb'), 
-            stdout=open(os.devnull, 'wb'), shell=True)
-    return
-
-def sgseq(filename):
-
-    cmd = SOLVERS_DIR + 'SGSeq/SGSeq.sh '
-    instance = filename
-    args = ''
-    if DEBUG:
-        print cmd + instance + args
-        call(cmd + instance + args, shell=True)
-    else:
-        call(cmd + instance + args, stderr=open(os.devnull, 'wb'), 
-            stdout=open(os.devnull, 'wb'), shell=True)
-    return
-
-def glucose(filename):
-
-    cmd = SOLVERS_DIR + 'glucose/glucose '
-    instance = filename
-    args = ''
-    if DEBUG:
-        print cmd + instance + args
-        call(cmd + instance + args, shell=True)
-    else:
-        call(cmd + instance + args, stderr=open(os.devnull, 'wb'), 
-            stdout=open(os.devnull, 'wb'), shell=True)
-    return
-
-def cryptominisat(filename):
-
-    cmd = SOLVERS_DIR + 'cryptominisat/cryptominisat '
-    instance = filename
-    args = ''
-    if DEBUG:
-        print cmd + instance + args
-        call(cmd + instance + args, shell=True)
-    else:
-        call(cmd + instance + args, stderr=open(os.devnull, 'wb'), 
-            stdout=open(os.devnull, 'wb'), shell=True)
-    return
-
-solvers = {
-    '1' : glueSplit,
-    '2' : lingeling,
-    '3' : lingeling_druplig,
-    '4' : sparrow,
-    '5' : minisat_blbd,
-    '6' : sgseq,
-    '7' : cryptominisat,
-    '8' : glucose,
-}
-
-def solve_instance(solver, instance_path):
-
-    solvers[solver](instance_path)
+if debug3:
+    debug1 = debug3
+    debug2 = debug3
 
 if __name__ == '__main__':
 
-    args = parser.parse_args()
-    single_solve = args.single
-    solve_all = args.solve_all
-    INSTANCES_DIR = args.benchmark
-    DEBUG = args.debug
+    solver_ids = [(solvers_dir + 'glueSplit/glueSplit_clasp ', ''),
+                  (solvers_dir + 'Lingeling/lingeling -v ', ''),
+                  (solvers_dir + 'Lingeling/lingeling -v --druplig ', ''),
+                  (solvers_dir + 'Sparrow/SparrowToRiss.sh ', ' 1 .'),
+                  (solvers_dir + 'minisat_blbd/minisat_blbd ', ''),
+                  (solvers_dir + 'SGSeq/SGSeq.sh ', ''),
+#                 (solvers_dir + 'glucose/glucose ', ''),
+                  (solvers_dir + 'cryptominisat/cryptominisat ', ''),
+                  (solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh ', ' 1 1000')]
 
-    if single_solve:
+    solvers = {
+        solvers_dir + 'glueSplit/glueSplit_clasp '        : 1,
+        solvers_dir + 'Lingeling/lingeling -v '           : 2,
+        solvers_dir + 'Lingeling/lingeling -v --druplig ' : 3,
+        solvers_dir + 'Sparrow/SparrowToRiss.sh '         : 4,
+        solvers_dir + 'minisat_blbd/minisat_blbd '        : 5,
+        solvers_dir + 'SGSeq/SGSeq.sh '                   : 6,
+        solvers_dir + 'cryptominisat/cryptominisat '      : 7,
+        solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh '    : 8,
+#       solvers_dir + 'glucose/glucose '                  : 9,
+        }
 
-        target = args.target
-        selected = args.selected
-        line = linecache.getline(args.file, int(target)).rstrip()
-        solve_instance(selected, INSTANCES_DIR + line)
-        linecache.clearcache()
+    combinator = Combinator(solver_ids, instances,
+                            instances_dir, single_solve,
+                            solve_all, debug1, debug2)
 
-    elif solve_all:
-
-        selected = args.selected
-        instance_file = open(args.file, 'r')
-        line = instance_file.readline().rstrip() 
-        while line != '':
-            
-            solve_instance(selected, INSTANCES_DIR + line)
-            line = instance_file.readline().rstrip()
-
-    else:
-
-        config = args.config
-        instance_file = open(args.file, 'r')
-        line = instance_file.readline().rstrip()
-        solved = 0
-        while line != '':
-
-            solve_instance(config[solved], INSTANCES_DIR + line)
-            solved += 1
-            line = instance_file.readline().rstrip()
-
+    combinator.solve(solver = selected, target_instance = target_instance)
