@@ -95,9 +95,11 @@ parser.add_argument('-sg', '--single-solve',
     help = 'Solves a single instance with a given solver.')
 parser.add_argument('-t', '--target-instance',
     dest = 'target',
+    default = '-1',
     help = 'The instance to solve. (only when --single-solve is passed)')
 parser.add_argument('-ss', '--select-solver',
     dest = 'selected', 
+    default = '-1',
     help = 'The solver to be used. (only when --single-solver is passed)')
 parser.add_argument('-id', '--instance-directory',
     dest = 'instances_dir',
@@ -177,4 +179,5 @@ if __name__ == '__main__':
                             instances_dir, single_solve,
                             solve_all, debug1, debug2)
 
-    combinator.solve(solver = selected, target_instance = target_instance)
+    #combinator.solve(solver = selected, target_instance = target_instance)
+    combinator.solve(combination = config)
