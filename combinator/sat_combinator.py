@@ -165,7 +165,7 @@ if __name__ == '__main__':
                   (solvers_dir + 'SGSeq/SGSeq.sh ', ''),
                   (solvers_dir + 'cryptominisat/cryptominisat ', ''),
                   (solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh ', ' 1 1000')]
-#                 (solvers_dir + 'glucose/glucose ', '')]
+    #                 (solvers_dir + 'glucose/glucose ', '')]
 
     solvers = {
         solvers_dir + 'glueSplit/glueSplit_clasp '        : 0,
@@ -176,7 +176,7 @@ if __name__ == '__main__':
         solvers_dir + 'SGSeq/SGSeq.sh '                   : 5,
         solvers_dir + 'cryptominisat/cryptominisat '      : 6,
         solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh '    : 7,
-#       solvers_dir + 'glucose/glucose '                  : 8,
+    #       solvers_dir + 'glucose/glucose '                  : 8,
         }
 
     combinator = Combinator(solver_ids, instances,

@@ -93,7 +93,7 @@ if __name__ == '__main__':
     LOG_DIR = args.log_dir
     LOG_FILE = args.log_file
     LOG_BEST = args.log_best
-    BENCHMARK = ' --benchmark ' + args.benchmark
+    BENCHMARK = ' -id ' + args.benchmark
     CONFIG = ' --solver-config'
     CMD = 'python sat_combinator.py'
     INSTANCES = int(args.instance_number)

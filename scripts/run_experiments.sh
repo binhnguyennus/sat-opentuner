@@ -9,6 +9,7 @@ INSTANCE_SET=$4
 INSTANCE_NUMBER=$5
 RUNS=$6
 
+cd combinator
 for i in $(seq 1 $RUNS)
 do
     python sat_tuning.py --no-dups --stop-after=${TIME} \
@@ -22,6 +23,10 @@ do
     --results-log=${LOG_DIR}logbest.txt \
     --technique=test2
     #--seed-configuration=${LOG_DIR}seed.json
-    rm *.arff
-    rm classify_*
 done
+
+rm *.arff
+rm classify_*
+rm cp_*
+rm model*
+cd -
