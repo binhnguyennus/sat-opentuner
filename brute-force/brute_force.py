@@ -1,6 +1,6 @@
 #! /usr/bin/env python2
 #
-# Brute Force Searcher for a 
+# Brute Force Searcher for a
 # set of instances and solvers.
 #
 # Outputs the best configuration
@@ -10,6 +10,7 @@ import argparse
 import linecache
 import os
 import time
+import math
 from subprocess import call
 
 class Benchmark:
@@ -29,11 +30,19 @@ class Benchmark:
     def calc_average(self):
         return sum(self._values) / len(self._values)
 
+    def calc_stddev(self):
+        average = self.average()
+        temp = [(v - average) ** 2 for v in self._values]
+        return math.sqrt(sum(temp) / len(self._values))
+
     def median(self):
         return self._median
 
     def average(self):
         return self._average
+
+    def stddev(self):
+        return self._stddev
 
     def solver(self):
         return self._solver
@@ -47,6 +56,7 @@ class Benchmark:
         self._values = values
         self._median = self.calc_median()
         self._average = self.calc_average()
+        self._stddev = self.calc_stddev()
 
 class Solver:
     def benchmark(self, instance, runs):
@@ -95,10 +105,10 @@ class Searcher:
                     min_index = i
 
             best_b = benchmark[min_index]
-            self._best.append([best_b.solver(), best_b.instance(), best_b.average()])
+            self._best.append([best_b.solver(), best_b.instance(), best_b.average(), best_b.stddev()])
 
         print '> Done.'
-        return self._best            
+        return self._best
 
     def benchmark(self):
         print '> Starting Benchmarks.'
@@ -136,7 +146,7 @@ class Searcher:
                                         solver_names[i][1], debug2))
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-id', '--instance-directory', 
+parser.add_argument('-id', '--instance-directory',
     dest = 'instances_dir',
     default = 'instances/sat_lib/',
     help = 'The directory containing instances to be solved.')
