@@ -87,12 +87,18 @@ class Solver:
         self._debug = debug
 
 class Searcher:
-    def log(self):
+    def log(self, runtime):
         times =  open('brute-force/logtimes.txt', 'w+')
         configuration = open('brute-force/logconfig.txt', 'w+')
+        stats = open('brute-force/logstats.txt', 'w+')
+        total = 0
         for b in self._best:
+            total += b[2]
             times.write(', '.join(map(str,b)) + '\n')
             configuration.write(str(solvers[b[0]]) + ' ')
+
+        stats.write('Total Run Time: {}\n'.format(runtime))
+        stats.write('Best Combination Total Time = {}\n'.format(total))
 
     def find_best(self):
         print '> Finding best solver for each instance.'
@@ -108,10 +114,10 @@ class Searcher:
             self._best.append([best_b.solver(), best_b.instance(), best_b.average(), best_b.stddev()])
 
         print '> Done.'
-        return self._best
 
     def benchmark(self):
         print '> Starting Benchmarks.'
+        start = time.time()
         for i in range(len(self._instances)):
             print '> Solving instance: {0}'.format(i)
             if self._debug:
@@ -126,6 +132,8 @@ class Searcher:
                     print '>    Done.'
 
         print '> Done.'
+        self.find_best()
+        self.log(time.time() - start)
 
     def __init__(self, solver_names, instances_dir, instances, runs, debug1, debug2):
         with open(instances, 'r') as instance_file:
@@ -203,24 +211,22 @@ if __name__ == '__main__':
                   (solvers_dir + 'Sparrow/SparrowToRiss.sh ', ' 1 .'),
                   (solvers_dir + 'minisat_blbd/minisat_blbd ', ''),
                   (solvers_dir + 'SGSeq/SGSeq.sh ', ''),
-#                 (solvers_dir + 'glucose/glucose ', ''),
                   (solvers_dir + 'cryptominisat/cryptominisat ', ''),
                   (solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh ', ' 1 1000')]
+#                 (solvers_dir + 'glucose/glucose ', '')]
 
     solvers = {
-        solvers_dir + 'glueSplit/glueSplit_clasp '        : 1,
-        solvers_dir + 'Lingeling/lingeling -v '           : 2,
-        solvers_dir + 'Lingeling/lingeling -v --druplig ' : 3,
-        solvers_dir + 'Sparrow/SparrowToRiss.sh '         : 4,
-        solvers_dir + 'minisat_blbd/minisat_blbd '        : 5,
-        solvers_dir + 'SGSeq/SGSeq.sh '                   : 6,
-        solvers_dir + 'cryptominisat/cryptominisat '      : 7,
-        solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh '    : 8,
-#       solvers_dir + 'glucose/glucose '                  : 9,
+        solvers_dir + 'glueSplit/glueSplit_clasp '        : 0,
+        solvers_dir + 'Lingeling/lingeling -v '           : 1,
+        solvers_dir + 'Lingeling/lingeling -v --druplig ' : 2,
+        solvers_dir + 'Sparrow/SparrowToRiss.sh '         : 3,
+        solvers_dir + 'minisat_blbd/minisat_blbd '        : 4,
+        solvers_dir + 'SGSeq/SGSeq.sh '                   : 5,
+        solvers_dir + 'cryptominisat/cryptominisat '      : 6,
+        solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh '    : 7,
+#       solvers_dir + 'glucose/glucose '                  : 8,
         }
 
 
     searcher = Searcher(solver_ids, instances_dir, instances, runs, debug1, debug2)
     searcher.benchmark()
-    best = searcher.find_best()
-    searcher.log()

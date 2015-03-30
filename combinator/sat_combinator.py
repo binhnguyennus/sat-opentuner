@@ -9,6 +9,7 @@
 import argparse
 import linecache
 import os
+import time
 from subprocess import call
 
 class Solver:
@@ -39,10 +40,13 @@ class Combinator:
         if self._debug:
             print '> Starting to solve a combination.'
 
+        start = time.time()
         for i in range(len(combination)):
             if self._debug:
                 print '    > Solving instance {0} with solver {1}.'.format(self._instances[i], self._solvers[int(combination[i])].name())
             self._solvers[int(combination[i])].solve(self._instances[i])
+
+        print '> Time: {}'.format(time.time() - start)
 
     def _all(self, solver):
         if self._debug:
@@ -95,11 +99,11 @@ parser.add_argument('-sg', '--single-solve',
     help = 'Solves a single instance with a given solver.')
 parser.add_argument('-t', '--target-instance',
     dest = 'target',
-    default = '-1',
+    default = None,
     help = 'The instance to solve. (only when --single-solve is passed)')
 parser.add_argument('-ss', '--select-solver',
     dest = 'selected', 
-    default = '-1',
+    default = None,
     help = 'The solver to be used. (only when --single-solver is passed)')
 parser.add_argument('-id', '--instance-directory',
     dest = 'instances_dir',
@@ -138,11 +142,11 @@ args = parser.parse_args()
 solvers_dir = args.solvers_dir
 instances = args.instances
 instances_dir = args.instances_dir
-target_instance = int(args.target)
+target_instance = int(args.target) if args.target else args.target 
 config = args.config
 single_solve = args.single
 solve_all = args.solve_all
-selected = int(args.selected)
+selected = int(args.selected) if args.selected else args.selected
 debug1 = args.debug1
 debug2 = args.debug2
 debug3 = args.debug3
@@ -159,25 +163,29 @@ if __name__ == '__main__':
                   (solvers_dir + 'Sparrow/SparrowToRiss.sh ', ' 1 .'),
                   (solvers_dir + 'minisat_blbd/minisat_blbd ', ''),
                   (solvers_dir + 'SGSeq/SGSeq.sh ', ''),
-#                 (solvers_dir + 'glucose/glucose ', ''),
                   (solvers_dir + 'cryptominisat/cryptominisat ', ''),
                   (solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh ', ' 1 1000')]
+#                 (solvers_dir + 'glucose/glucose ', '')]
 
     solvers = {
-        solvers_dir + 'glueSplit/glueSplit_clasp '        : 1,
-        solvers_dir + 'Lingeling/lingeling -v '           : 2,
-        solvers_dir + 'Lingeling/lingeling -v --druplig ' : 3,
-        solvers_dir + 'Sparrow/SparrowToRiss.sh '         : 4,
-        solvers_dir + 'minisat_blbd/minisat_blbd '        : 5,
-        solvers_dir + 'SGSeq/SGSeq.sh '                   : 6,
-        solvers_dir + 'cryptominisat/cryptominisat '      : 7,
-        solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh '    : 8,
-#       solvers_dir + 'glucose/glucose '                  : 9,
+        solvers_dir + 'glueSplit/glueSplit_clasp '        : 0,
+        solvers_dir + 'Lingeling/lingeling -v '           : 1,
+        solvers_dir + 'Lingeling/lingeling -v --druplig ' : 2,
+        solvers_dir + 'Sparrow/SparrowToRiss.sh '         : 3,
+        solvers_dir + 'minisat_blbd/minisat_blbd '        : 4,
+        solvers_dir + 'SGSeq/SGSeq.sh '                   : 5,
+        solvers_dir + 'cryptominisat/cryptominisat '      : 6,
+        solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh '    : 7,
+#       solvers_dir + 'glucose/glucose '                  : 8,
         }
 
     combinator = Combinator(solver_ids, instances,
                             instances_dir, single_solve,
                             solve_all, debug1, debug2)
 
-    #combinator.solve(solver = selected, target_instance = target_instance)
-    combinator.solve(combination = config)
+    if config:
+        combinator.solve(combination = config)
+    elif (selected and target_instance):
+        combinator.solve(solver = selected, target_instance = target_instance)
+    elif (selected and solve_all):
+        combinator.solve(solver = selected)
