@@ -24,7 +24,6 @@ do
         -id ${INSTANCE_DIR} \
         -sa \
         -ss=${i} |& grep -oP '(?<=Time: )[0-9]*.[0-9]*'`
-        echo ${TIME}
         echo "$TIME" >> ${LOG}
     done
 done

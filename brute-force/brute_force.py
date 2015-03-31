@@ -11,7 +11,7 @@ import linecache
 import os
 import time
 import math
-from subprocess import call
+from subprocess import Popen, PIPE
 
 class Benchmark:
     def values(self):
@@ -62,28 +62,24 @@ class Solver:
     def benchmark(self, instance, runs):
         times = []
         for i in range(runs):
-            start = time.time()
-            self._solve(instance)
-            times.append(time.time() - start)
-
+            t = self._solve(instance)
+            times.append(t)
         return Benchmark(times, self._name, instance)
 
     def _solve(self, instance):
-        cmd = self._cmd + instance + self._args
+        cmd = self._cmd + ' -t ' + str(instance)
+        out, err = Popen(cmd, shell = True, stdout = PIPE, stderr = PIPE).communicate()
         if self._debug:
-            print cmd
-            call(cmd, shell = True)
-        else:
-            call(cmd, stderr = open(os.devnull, 'wb'),
-                 stdout = open(os.devnull, 'wb'), shell = True)
+            print 'cmd: {0}\nout: {1}\nerr: {2}'.format(cmd, out, err)
+
+        return float(out.split('Time: ')[1])
 
     def name(self):
         return self._name
 
-    def __init__(self, name, cmd, args, debug):
+    def __init__(self, name, cmd, debug):
         self._name = name
-        self._cmd = cmd
-        self._args = args
+        self._cmd = cmd + str(name)
         self._debug = debug
 
 class Searcher:
@@ -95,7 +91,7 @@ class Searcher:
         for b in self._best:
             total += b[2]
             times.write('{}\n'.format(', '.join(map(str,b))))
-            configuration.write('{} '.format(str(solvers[b[0]])))
+            configuration.write('{} '.format(str(b[0])))
 
         configuration.write('\n')
         stats.write('Total Run Time: {}\n'.format(runtime))
@@ -128,7 +124,7 @@ class Searcher:
                 if self._debug:
                     print '>    With solver {}.'.format(solver.name())
                 self._instance_benchmarks[i].append(
-                        solver.benchmark(self._instances[i], self._runs))
+                        solver.benchmark(i, self._runs))
                 if self._debug:
                     print '>    Done.'
 
@@ -136,23 +132,27 @@ class Searcher:
         self.find_best()
         self.log(time.time() - start)
 
-    def __init__(self, solver_names, instances_dir, instances, runs, debug1, debug2):
-        with open(instances, 'r') as instance_file:
-            self._instances = instance_file.read().splitlines()
-
+    def __init__(self, cmd, solvers, instances_dir, instances, runs, debug1, debug2):
         print '> Initializing Brute Force Searcher.'
         print '>    Number of runs in each benchmark: {}'.format(runs)
+
+        with open(instances, 'r') as instance_file:
+            self._instances = instance_file.read().splitlines()
+        self._instances_dir = instances_dir
         self._instances = [instances_dir + i for i in self._instances]
-        self._solver_names = solver_names
         self._runs = runs
+        self._cmd = cmd
         self._debug = debug1
 
         self._best = []
         self._solvers = []
         self._instance_benchmarks = []
-        for i in range(len(solver_names)):
-            self._solvers.append(Solver(solver_names[i][0], solver_names[i][0],
-                                        solver_names[i][1], debug2))
+
+        for i in range(len(solvers.values())):
+            cmd = self._cmd + '-f ' + instances
+            cmd += ' -id ' + instances_dir
+            cmd += ' -ss '
+            self._solvers.append(Solver(i, cmd, debug2))
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-id', '--instance-directory',
@@ -206,28 +206,17 @@ if debug3:
 
 if __name__ == '__main__':
 
-    solver_ids = [(solvers_dir + 'glueSplit/glueSplit_clasp ', ''),
-                  (solvers_dir + 'Lingeling/lingeling -v ', ''),
-                  (solvers_dir + 'Lingeling/lingeling -v --druplig ', ''),
-                  (solvers_dir + 'Sparrow/SparrowToRiss.sh ', ' 1 .'),
-                  (solvers_dir + 'minisat_blbd/minisat_blbd ', ''),
-                  (solvers_dir + 'SGSeq/SGSeq.sh ', ''),
-                  (solvers_dir + 'cryptominisat/cryptominisat ', ''),
-                  (solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh ', ' 1 1000')]
-#                 (solvers_dir + 'glucose/glucose ', '')]
-
     solvers = {
-        solvers_dir + 'glueSplit/glueSplit_clasp '        : 0,
-        solvers_dir + 'Lingeling/lingeling -v '           : 1,
-        solvers_dir + 'Lingeling/lingeling -v --druplig ' : 2,
-        solvers_dir + 'Sparrow/SparrowToRiss.sh '         : 3,
-        solvers_dir + 'minisat_blbd/minisat_blbd '        : 4,
-        solvers_dir + 'SGSeq/SGSeq.sh '                   : 5,
-        solvers_dir + 'cryptominisat/cryptominisat '      : 6,
-        solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh '    : 7,
-#       solvers_dir + 'glucose/glucose '                  : 8,
+        0 : solvers_dir + 'glueSplit/glueSplit_clasp',
+        1 : solvers_dir + 'Lingeling/lingeling -v',
+        2 : solvers_dir + 'Lingeling/lingeling -v --druplig',
+        3 : solvers_dir + 'Sparrow/SparrowToRiss.sh',
+        4 : solvers_dir + 'minisat_blbd/minisat_blbd',
+        5 : solvers_dir + 'SGSeq/SGSeq.sh',
+        6 : solvers_dir + 'cryptominisat/cryptominisat',
+        7 : solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh',
         }
 
-
-    searcher = Searcher(solver_ids, instances_dir, instances, runs, debug1, debug2)
+    cmd = 'python combinator/combinator.py '
+    searcher = Searcher(cmd, solvers, instances_dir, instances, runs, debug1, debug2)
     searcher.benchmark()

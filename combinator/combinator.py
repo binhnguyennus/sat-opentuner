@@ -22,10 +22,6 @@ class Solver:
             call(cmd, stderr = open(os.devnull, 'wb'),
                  stdout = open(os.devnull, 'wb'), shell = True)
 
-    def solve_all(self, instances):
-        for instance in instances:
-            self.solve(instance)
-
     def name(self):
         return self._name
 
@@ -37,41 +33,29 @@ class Solver:
 
 class Combinator:
     def _combination(self, combination):
+        print len(combination)
         if self._debug:
             print '> Starting to solve a combination.'
-
-        start = time.time()
         for i in range(len(combination)):
-            if self._debug:
-                print '    > Solving instance {0} with solver {1}.'.format(self._instances[i], self._solvers[int(combination[i])].name())
-            self._solvers[int(combination[i])].solve(self._instances[i])
-
-        print '> Time: {}'.format(time.time() - start)
+            self._single(int(combination[i]), i)
 
     def _all(self, solver):
         if self._debug:
-            print '> Starting to solve all instances with solver {0}.'.format(self._solvers[solver].name())
-        start = time.time()
-#        self._solvers[solver].solve_all(self._instances)
-        for instance in self._instances:
-            if self._debug:
-                print '    > Solving instance {0} with solver {1}.'.format(self._instances[i], self._solvers[int(combination[i])].name())
-            self._solvers[solver].solve(instance)
-        print '> Time: {}'.format(time.time() - start)
+            print '> Starting to solve all instances with {0}.'.format(self._solvers[solver].name())
+        combination = [solver]*len(self._instances)
+        self._combination(combination)
 
     def _single(self, solver, target_instance):
         if self._debug:
-            print '> Starting to solve instance {0} with solver {1}.'.format(self._instances[target_instance], self._solvers[solver].name())
-        start = time.time()
+            print '> Solving {0} with {1}.'.format(self._instances[target_instance], self._solvers[solver].name())
         self._solvers[solver].solve(self._instances[target_instance])
-        print '> Time: {}'.format(time.time() - start)
 
     def solve(self, combination = None, solver = None, target_instance = None):
         if combination:
             self._combination(combination)
         elif self._solve_all:
             self._all(solver)
-        elif self._single_solve:
+        elif target_instance != None:
             self._single(solver, target_instance)
             
     def __init__(self, solver_names, instances, 
@@ -91,6 +75,7 @@ class Combinator:
             self._solvers.append(Solver(solver_names[i][0], solver_names[i][0],
                                         solver_names[i][1], debug2))
 
+start = time.time()
 parser = argparse.ArgumentParser()
 parser.add_argument('-c', '--solver-config', nargs = '+',
     dest = 'config',
@@ -166,14 +151,13 @@ if debug3:
 if __name__ == '__main__':
 
     solver_ids = [(solvers_dir + 'glueSplit/glueSplit_clasp ', ''),
-                  (solvers_dir + 'Lingeling/lingeling -v ', ''),
-                  (solvers_dir + 'Lingeling/lingeling -v --druplig ', ''),
-                  (solvers_dir + 'Sparrow/SparrowToRiss.sh ', ' 1 .'),
-                  (solvers_dir + 'minisat_blbd/minisat_blbd ', ''),
-                  (solvers_dir + 'SGSeq/SGSeq.sh ', ''),
-                  (solvers_dir + 'cryptominisat/cryptominisat ', ''),
-                  (solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh ', ' 1 1000')]
-    #                 (solvers_dir + 'glucose/glucose ', '')]
+        (solvers_dir + 'Lingeling/lingeling -v ', ''),
+        (solvers_dir + 'Lingeling/lingeling -v --druplig ', ''),
+        (solvers_dir + 'Sparrow/SparrowToRiss.sh ', ' 1 .'),
+        (solvers_dir + 'minisat_blbd/minisat_blbd ', ''),        
+        (solvers_dir + 'SGSeq/SGSeq.sh ', ''),        
+        (solvers_dir + 'cryptominisat/cryptominisat ', ''),        
+        (solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh ', ' 1 1000')]
 
     solvers = {
         solvers_dir + 'glueSplit/glueSplit_clasp '        : 0,
@@ -184,16 +168,17 @@ if __name__ == '__main__':
         solvers_dir + 'SGSeq/SGSeq.sh '                   : 5,
         solvers_dir + 'cryptominisat/cryptominisat '      : 6,
         solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh '    : 7,
-    #       solvers_dir + 'glucose/glucose '                  : 8,
         }
 
     combinator = Combinator(solver_ids, instances,
                             instances_dir, single_solve,
                             solve_all, debug1, debug2)
 
-    if config:
-        combinator.solve(combination = config)
-    elif (selected != None and target_instance):
+    if (selected != None and target_instance != None):
         combinator.solve(solver = selected, target_instance = target_instance)
+    elif config:
+        combinator.solve(combination = config)
     elif (selected != None and solve_all):
         combinator.solve(solver = selected)
+
+    print '> Time: {}'.format(time.time() - start)
