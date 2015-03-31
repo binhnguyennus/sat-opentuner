@@ -45,21 +45,28 @@ argparser.set_defaults(log_best = False)
 class SATTuner(MeasurementInterface):
     def manipulator(self):
         manipulator = ConfigurationManipulator()
-        param, l_min, l_max = SOLVERS
-        for i in range (INSTANCES):
+        solvers, s_min, s_max = SOLVERS
+        cutoff, c_min, c_max = CUTOFF
+        for i in range (SOLVER_PARAMS):
             manipulator.add_parameter(
-                    IntegerParameter(param+str(i), l_min, l_max))
+                    IntegerParameter(solvers+str(i), s_min, s_max))
+
+        manipulator.add_parameter(
+                    IntegerParameter(cutoff, c_min, c_max))
         return manipulator
 
     def run(self, desired_result, input, limit):
         cfg = desired_result.configuration.data
 
-        param, l_min, l_max = SOLVERS
-
+        solver = SOLVERS[0]
+        cutoff = CUTOFF[0]
         cmd = CMD
         cmd += INSTANCE_FILE + BENCHMARK + CONFIG
         for i in range (INSTANCES):
-            cmd += ' ' + str(cfg[param + str(i)])
+            if (i < cfg[cutoff]):
+                cmd += ' ' + str(cfg[solver + '0'])
+            else:
+                cmd += ' ' + str(cfg[solver + '1'])
 
         run_result = self.call_program(cmd, limit=TIMEOUT)
         if (run_result['timeout']):
@@ -71,7 +78,8 @@ class SATTuner(MeasurementInterface):
     def save_final_config(self, configuration):
         cfg = configuration.data
 
-        param, l_min, l_max = SOLVERS
+        solver = SOLVERS[0]
+        cutoff = CUTOFF[0]
         cmd = CMD
         cmd += INSTANCE_FILE + BENCHMARK + CONFIG
         if (LOG_BEST):
@@ -79,7 +87,10 @@ class SATTuner(MeasurementInterface):
             self.manipulator().save_to_file(cfg, LOG_DIR + 'final_config.json')
 
         for i in range (INSTANCES):
-            cmd += ' ' + str(cfg[param + str(i)])
+            if (i < cfg[cutoff]):
+                cmd += ' ' + str(cfg[solver + '0'])
+            else:
+                cmd += ' ' + str(cfg[solver + '1'])
 
         print "Optimal config written to " + LOG_DIR + LOG_FILE + ": ", cmd
         with open(LOG_DIR + LOG_FILE, 'a+') as myfile:
@@ -89,6 +100,7 @@ if __name__ == '__main__':
     args = argparser.parse_args()
 
     SOLVERS = ('i', 0, 7)
+    SOLVER_PARAMS = 2
     INSTANCE_FILE = ' --instance-file ' + args.instances
     LOG_DIR = args.log_dir
     LOG_FILE = args.log_file
@@ -98,5 +110,6 @@ if __name__ == '__main__':
     CMD = 'python sat_combinator.py'
     INSTANCES = int(args.instance_number)
     TIMEOUT = int(args.timeout)
+    CUTOFF = ('c', 0, INSTANCES - 1)
 
     SATTuner.main(args)
