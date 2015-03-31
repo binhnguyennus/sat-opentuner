@@ -94,9 +94,10 @@ class Searcher:
         total = 0
         for b in self._best:
             total += b[2]
-            times.write(', '.join(map(str,b)) + '\n')
-            configuration.write(str(solvers[b[0]]) + ' ')
+            times.write('{}\n'.format(', '.join(map(str,b))))
+            configuration.write('{} '.format(str(solvers[b[0]])))
 
+        configuration.write('\n')
         stats.write('Total Run Time: {}\n'.format(runtime))
         stats.write('Best Combination Total Time = {}\n'.format(total))
 
@@ -119,13 +120,13 @@ class Searcher:
         print '> Starting Benchmarks.'
         start = time.time()
         for i in range(len(self._instances)):
-            print '> Solving instance: {0}'.format(i)
+            print '> Solving instance: {}'.format(i)
             if self._debug:
-                print '> Starting Benchmark of instance {0} :'.format(self._instances[i])
+                print '> Starting Benchmark of instance {} :'.format(self._instances[i])
             self._instance_benchmarks.append([])
             for solver in self._solvers:
                 if self._debug:
-                    print '>    With solver {0}.'.format(solver.name())
+                    print '>    With solver {}.'.format(solver.name())
                 self._instance_benchmarks[i].append(
                         solver.benchmark(self._instances[i], self._runs))
                 if self._debug:
@@ -140,7 +141,7 @@ class Searcher:
             self._instances = instance_file.read().splitlines()
 
         print '> Initializing Brute Force Searcher.'
-        print '>    Number of runs in each benchmark: {0}'.format(runs)
+        print '>    Number of runs in each benchmark: {}'.format(runs)
         self._instances = [instances_dir + i for i in self._instances]
         self._solver_names = solver_names
         self._runs = runs

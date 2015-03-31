@@ -51,12 +51,20 @@ class Combinator:
     def _all(self, solver):
         if self._debug:
             print '> Starting to solve all instances with solver {0}.'.format(self._solvers[solver].name())
-        self._solvers[solver].solve_all(self._instances)
+        start = time.time()
+#        self._solvers[solver].solve_all(self._instances)
+        for instance in self._instances:
+            if self._debug:
+                print '    > Solving instance {0} with solver {1}.'.format(self._instances[i], self._solvers[int(combination[i])].name())
+            self._solvers[solver].solve(instance)
+        print '> Time: {}'.format(time.time() - start)
 
     def _single(self, solver, target_instance):
         if self._debug:
             print '> Starting to solve instance {0} with solver {1}.'.format(self._instances[target_instance], self._solvers[solver].name())
+        start = time.time()
         self._solvers[solver].solve(self._instances[target_instance])
+        print '> Time: {}'.format(time.time() - start)
 
     def solve(self, combination = None, solver = None, target_instance = None):
         if combination:
@@ -185,7 +193,7 @@ if __name__ == '__main__':
 
     if config:
         combinator.solve(combination = config)
-    elif (selected and target_instance):
+    elif (selected != None and target_instance):
         combinator.solve(solver = selected, target_instance = target_instance)
-    elif (selected and solve_all):
+    elif (selected != None and solve_all):
         combinator.solve(solver = selected)

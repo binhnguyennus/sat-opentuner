@@ -11,9 +11,12 @@ do
     COUNTER=0
     while read line; do
         LOG="${FILE_PATH}/benchmark_${COUNTER}.txt"
-        bash -c "${line} |& grep -oP '(?<=real )[0-9]*.[0-9]*' >> ${LOG}"
+        bash -c "${line} |& grep -oP '(?<=Time: )[0-9]*.[0-9]*' >> ${LOG}"
         COUNTER=$((COUNTER+1))
     done < "${FILE_PATH}/${FILE}"
 done
 rm *.arff
 rm classify*
+rm cp_*
+rm model*
+cd -

@@ -12,15 +12,15 @@ RUNS=$6
 cd combinator
 for i in $(seq 1 $RUNS)
 do
-    python sat_tuning.py --no-dups --stop-after=${TIME} \
+    python tuner.py --no-dups --stop-after=${TIME} \
     --logdir=${LOG_DIR} \
     --bestlog=final_config_commands \
     --log-best-data \
     -i=${INSTANCE_NUMBER} \
     --instance-set=${INSTANCE_SET} \
     --parallelism=${THREADS} \
-    --results-log-detail=${LOG_DIR}logall.txt \
-    --results-log=${LOG_DIR}logbest.txt
+    --results-log-detail=${LOG_DIR}/logall.txt \
+    --results-log=${LOG_DIR}/logbest.txt
     #--technique=test2
     #--seed-configuration=${LOG_DIR}seed.json
 done

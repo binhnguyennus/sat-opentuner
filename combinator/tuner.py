@@ -94,7 +94,7 @@ class SATTuner(MeasurementInterface):
 
         print "Optimal config written to " + LOG_DIR + LOG_FILE + ": ", cmd
         with open(LOG_DIR + LOG_FILE, 'a+') as myfile:
-            myfile.write("/usr/bin/time -p " + cmd + "\n")
+            myfile.write(cmd + "\n")
 
 if __name__ == '__main__':
     args = argparser.parse_args()
@@ -107,7 +107,7 @@ if __name__ == '__main__':
     LOG_BEST = args.log_best
     BENCHMARK = ' -id ' + args.benchmark
     CONFIG = ' --solver-config'
-    CMD = 'python sat_combinator.py'
+    CMD = 'python combinator.py'
     INSTANCES = int(args.instance_number)
     TIMEOUT = int(args.timeout)
     CUTOFF = ('c', 0, INSTANCES - 1)
