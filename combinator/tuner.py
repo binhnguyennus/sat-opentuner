@@ -80,7 +80,7 @@ class SATTuner(MeasurementInterface):
 
         solver = SOLVERS[0]
         cutoff = CUTOFF[0]
-        cmd = CMD
+        cmd = 'python ../../../combinator.py'
         cmd += INSTANCE_FILE + BENCHMARK + CONFIG
         if (LOG_BEST):
             print "Optimal configuration written to 'final_config.json'."

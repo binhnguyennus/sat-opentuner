@@ -6,15 +6,17 @@ RUNS=$1
 FILE_PATH=$2
 FILE=$3
 
+cd ${FILE_PATH}
 for i in $(seq 1 $RUNS)
 do
     COUNTER=0
     while read line; do
-        LOG="${FILE_PATH}/benchmark_${COUNTER}.txt"
+        LOG="benchmark_${COUNTER}.txt"
         bash -c "${line} |& grep -oP '(?<=Time: )[0-9]*.[0-9]*' >> ${LOG}"
         COUNTER=$((COUNTER+1))
-    done < "${FILE_PATH}/${FILE}"
+    done < "${FILE}"
 done
+
 rm *.arff
 rm classify*
 rm cp_*
