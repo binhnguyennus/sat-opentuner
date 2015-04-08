@@ -25,7 +25,7 @@ class Benchmark:
         if (size % 2 == 1):
                 return _values[((size + 1) / 2) - 1]
         if (size % 2 == 0):
-                return float(sum(_values[(size / 2) - 1:(size / 2) + 1])) / 2.0
+                return sum(_values[(size / 2) - 1:(size / 2) + 1]) / 2.0
 
     def calc_average(self):
         return sum(self._values) / len(self._values)
@@ -54,8 +54,8 @@ class Benchmark:
         self._solver = solver
         self._instance = instance
         self._values = values
-        self._median = self.calc_median()
-        self._average = self.calc_average()
+#        self._median = self.calc_median()
+#        self._average = self.calc_average()
         self._stddev = self.calc_stddev()
 
 class Solver:
@@ -102,13 +102,16 @@ class Searcher:
         self._best = []
         for benchmark in self._instance_benchmarks:
             averages = [solver.average() for solver in benchmark]
-            min_index = 0
-            for i in range(1, len(averages)):
-                if (averages[i] < averages[min_index]):
-                    min_index = i
-
-            best_b = benchmark[min_index]
-            self._best.append([best_b.solver(), best_b.instance(), best_b.average(), best_b.stddev()])
+#            min_index = 0
+#            for i in range(1, len(averages)):
+#                if (averages[i] < averages[min_index]):
+#                    min_index = i
+#
+#            best_b = benchmark[min_index]
+            best_b = benchmark[averages.index(min(averages))]
+            print "AV: " + averages
+            print "BEST: " + best_b.average()
+            self._best.append([best_b.solver(), best_b.instance(), best_b.average()])
 
         print '> Done.'
 
