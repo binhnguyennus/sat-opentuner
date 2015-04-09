@@ -8,9 +8,10 @@
 #
 import argparse
 import linecache
+import numpy
 import os
-import time
 import math
+import time
 from subprocess import Popen, PIPE
 
 class Benchmark:
@@ -27,19 +28,19 @@ class Benchmark:
         if (size % 2 == 0):
                 return sum(_values[(size / 2) - 1:(size / 2) + 1]) / 2.0
 
-    def calc_average(self):
-        return sum(self._values) / len(self._values)
+    def calc_mean(self):
+        return numpy.mean(numpy.array(self._values))
 
     def calc_stddev(self):
-        average = self.average()
-        temp = [(v - average) ** 2 for v in self._values]
+        mean = self.mean()
+        temp = [(v - mean) ** 2 for v in self._values]
         return math.sqrt(sum(temp) / len(self._values))
 
     def median(self):
         return self._median
 
-    def average(self):
-        return self._average
+    def mean(self):
+        return self._mean
 
     def stddev(self):
         return self._stddev
@@ -55,8 +56,8 @@ class Benchmark:
         self._instance = instance
         self._values = values
 #        self._median = self.calc_median()
-#        self._average = self.calc_average()
-        self._stddev = self.calc_stddev()
+        self._mean = self.calc_mean()
+#        self._stddev = self.calc_stddev()
 
 class Solver:
     def benchmark(self, instance, runs):
@@ -88,11 +89,16 @@ class Searcher:
         configuration = open('brute-force/logconfig.txt', 'w+')
         stats = open('brute-force/logstats.txt', 'w+')
         total = 0
+        configuration.write('python ../combinator/combinator.py -c ')
+        print 'LEN_BEST: ' + str(len(self._best))
         for b in self._best:
+            print 'Tt: ' + str(total)
             total += b[2]
+            print 'Tt + ' + str(b[2]) + ': ' + str(total)
             times.write('{}\n'.format(', '.join(map(str,b))))
             configuration.write('{} '.format(str(b[0])))
 
+        print 'LEN_BEST: ' + str(len(self._best))
         configuration.write('\n')
         stats.write('Total Run Time: {}\n'.format(runtime))
         stats.write('Best Combination Total Time = {}\n'.format(total))
@@ -101,17 +107,9 @@ class Searcher:
         print '> Finding best solver for each instance.'
         self._best = []
         for benchmark in self._instance_benchmarks:
-            averages = [solver.average() for solver in benchmark]
-#            min_index = 0
-#            for i in range(1, len(averages)):
-#                if (averages[i] < averages[min_index]):
-#                    min_index = i
-#
-#            best_b = benchmark[min_index]
-            best_b = benchmark[averages.index(min(averages))]
-            print "AV: " + averages
-            print "BEST: " + best_b.average()
-            self._best.append([best_b.solver(), best_b.instance(), best_b.average()])
+            means = [solver.mean() for solver in benchmark]
+            best_b = benchmark[means.index(min(means))]
+            self._best.append([best_b.solver(), best_b.instance(), best_b.mean()])
 
         print '> Done.'
 
@@ -172,7 +170,7 @@ parser.add_argument('-s', '--solvers-directory',
     help = 'The directory containing the solver binaries.')
 parser.add_argument('-r', '--runs',
     dest = 'runs',
-    default = '20',
+    default = '40',
     help = 'The number of runs in the benchmarks.')
 parser.add_argument('-v', '--debug1',
     dest = 'debug1',
