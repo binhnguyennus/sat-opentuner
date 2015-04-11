@@ -5,10 +5,11 @@
 LOG_DIR=$1
 TIME=$2
 THREADS=$3
-INSTANCE_SET=$4
-INSTANCE_NUMBER=$5
-RUNS=$6
-BENCH_RUNS=$7
+INSTANCE_DIR=$4
+INSTANCE_SET=$5
+INSTANCE_NUMBER=$6
+RUNS=$7
+BENCH_RUNS=$8
 CONFIG_NAME='final_config_commands'
 
 cd combinator
@@ -20,7 +21,8 @@ do
     --bestlog=${CONFIG_NAME} \
     --log-best-data \
     -i=${INSTANCE_NUMBER} \
-    --instance-set=${INSTANCE_SET} \
+    -f=${INSTANCE_SET} \
+    -id=${INSTANCE_DIR} \
     --parallelism=${THREADS} \
     --results-log-detail=${LOG_DIR}/run_${i}/logall.txt \
     --results-log=${LOG_DIR}/run_${i}/logbest.txt

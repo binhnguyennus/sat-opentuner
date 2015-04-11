@@ -156,8 +156,8 @@ if __name__ == '__main__':
         (solvers_dir + 'Sparrow/SparrowToRiss.sh ', ' 1 .'),
         (solvers_dir + 'minisat_blbd/minisat_blbd ', ''),
         (solvers_dir + 'SGSeq/SGSeq.sh ', ''),
-        (solvers_dir + 'cryptominisat/cryptominisat ', ''),
-        (solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh ', ' 1 1000')]
+        (solvers_dir + 'cryptominisat/cryptominisat ', '')]
+#        (solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh ', ' 1 1000')]
 
     solvers = {
         solvers_dir + 'glueSplit/glueSplit_clasp '        : 0,
@@ -167,7 +167,7 @@ if __name__ == '__main__':
         solvers_dir + 'minisat_blbd/minisat_blbd '        : 4,
         solvers_dir + 'SGSeq/SGSeq.sh '                   : 5,
         solvers_dir + 'cryptominisat/cryptominisat '      : 6,
-        solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh '    : 7,
+#        solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh '    : 7,
         }
 
     combinator = Combinator(solver_ids, instances,

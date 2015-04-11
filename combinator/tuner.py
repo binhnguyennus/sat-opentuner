@@ -12,11 +12,11 @@ from opentuner import MeasurementInterface
 from opentuner import Result
 
 argparser = argparse.ArgumentParser(parents=opentuner.argparsers())
-argparser.add_argument('--instance-set',
-        dest = 'instances', metavar = 'I',
-        help = 'The file containing all possible instances to solve')
-argparser.add_argument('--benchmark',
-        dest = 'benchmark', metavar = 'B',
+argparser.add_argument('-f', '--instance-set',
+        dest = 'instances',
+        help = 'The file containing a subset of instances to solve')
+argparser.add_argument('-id', '--instance-directory',
+        dest = 'instances_dir',
         help = 'The directory containing all the instances.')
 argparser.add_argument('-i', dest = 'instance_number',
         help = 'Number of instances to solve.')
@@ -38,7 +38,7 @@ argparser.add_argument('--log-best-data',
 
 argparser.set_defaults(timeout = 20)
 argparser.set_defaults(instance_number = 320)
-argparser.set_defaults(benchmark = 'instances/sat_lib/')
+argparser.set_defaults(instances_dir = 'instances/sat_lib/')
 argparser.set_defaults(instances = 'instance_set_3.txt')
 argparser.set_defaults(log_best = False)
 
@@ -99,15 +99,15 @@ class SATTuner(MeasurementInterface):
 if __name__ == '__main__':
     args = argparser.parse_args()
 
-    SOLVERS = ('i', 0, 7)
+    SOLVERS = ('i', 0, 6)
     SOLVER_PARAMS = 2
-    INSTANCE_FILE = ' --instance-file ' + args.instances
+    INSTANCE_FILE = ' -f ' + args.instances
     LOG_DIR = args.log_dir
     LOG_FILE = args.log_file
     LOG_BEST = args.log_best
-    BENCHMARK = ' -id ' + args.benchmark
+    BENCHMARK = ' -id ' + args.instances_dir
     CONFIG = ' --solver-config'
-    CMD = 'python combinator.py'
+    CMD = 'python combinator.py ' 
     INSTANCES = int(args.instance_number)
     TIMEOUT = int(args.timeout)
     CUTOFF = ('c', 0, INSTANCES - 1)

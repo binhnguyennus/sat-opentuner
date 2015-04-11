@@ -211,7 +211,7 @@ if __name__ == '__main__':
         4 : solvers_dir + 'minisat_blbd/minisat_blbd',
         5 : solvers_dir + 'SGSeq/SGSeq.sh',
         6 : solvers_dir + 'cryptominisat/cryptominisat',
-        7 : solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh',
+#        7 : solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh',
         }
 
     cmd = 'python combinator/combinator.py '
