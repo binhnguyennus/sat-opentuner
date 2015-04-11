@@ -57,9 +57,9 @@ class Combinator:
             self._all(solver)
         elif target_instance != None:
             self._single(solver, target_instance)
-            
-    def __init__(self, solver_names, instances, 
-                 instances_dir, single_solve, 
+
+    def __init__(self, solver_names, instances,
+                 instances_dir, single_solve,
                  solve_all, debug1, debug2):
         with open(instances, 'r') as instance_file:
             self._instances = instance_file.read().splitlines()
@@ -95,7 +95,7 @@ parser.add_argument('-t', '--target-instance',
     default = None,
     help = 'The instance to solve. (only when --single-solve is passed)')
 parser.add_argument('-ss', '--select-solver',
-    dest = 'selected', 
+    dest = 'selected',
     default = None,
     help = 'The solver to be used. (only when --single-solver is passed)')
 parser.add_argument('-id', '--instance-directory',
@@ -135,7 +135,7 @@ args = parser.parse_args()
 solvers_dir = args.solvers_dir
 instances = args.instances
 instances_dir = args.instances_dir
-target_instance = int(args.target) if args.target else args.target 
+target_instance = int(args.target) if args.target else args.target
 config = args.config
 single_solve = args.single
 solve_all = args.solve_all
@@ -154,9 +154,9 @@ if __name__ == '__main__':
         (solvers_dir + 'Lingeling/lingeling -v ', ''),
         (solvers_dir + 'Lingeling/lingeling -v --druplig ', ''),
         (solvers_dir + 'Sparrow/SparrowToRiss.sh ', ' 1 .'),
-        (solvers_dir + 'minisat_blbd/minisat_blbd ', ''),        
-        (solvers_dir + 'SGSeq/SGSeq.sh ', ''),        
-        (solvers_dir + 'cryptominisat/cryptominisat ', ''),        
+        (solvers_dir + 'minisat_blbd/minisat_blbd ', ''),
+        (solvers_dir + 'SGSeq/SGSeq.sh ', ''),
+        (solvers_dir + 'cryptominisat/cryptominisat ', ''),
         (solvers_dir + 'CCAnrglucose/CCAnr+glucose.sh ', ' 1 1000')]
 
     solvers = {

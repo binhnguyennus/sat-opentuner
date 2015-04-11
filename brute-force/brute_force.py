@@ -90,15 +90,11 @@ class Searcher:
         stats = open('brute-force/logstats.txt', 'w+')
         total = 0
         configuration.write('python ../combinator/combinator.py -c ')
-        print 'LEN_BEST: ' + str(len(self._best))
         for b in self._best:
-            print 'Tt: ' + str(total)
             total += b[2]
-            print 'Tt + ' + str(b[2]) + ': ' + str(total)
             times.write('{}\n'.format(', '.join(map(str,b))))
             configuration.write('{} '.format(str(b[0])))
 
-        print 'LEN_BEST: ' + str(len(self._best))
         configuration.write('\n')
         stats.write('Total Run Time: {}\n'.format(runtime))
         stats.write('Best Combination Total Time = {}\n'.format(total))
