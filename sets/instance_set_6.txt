@@ -1,9 +1,7 @@
-.
 uf150-066.cnf
 uf150-01.cnf
 uf150-089.cnf
 uf150-025.cnf
-instance_set_6.txt
 uf150-012.cnf
 uf150-031.cnf
 uf150-055.cnf
