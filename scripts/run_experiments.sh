@@ -8,8 +8,9 @@ THREADS=$3
 INSTANCE_DIR=$4
 INSTANCE_SET=$5
 INSTANCE_NUMBER=$6
-RUNS=$7
-BENCH_RUNS=$8
+CHUNKS=$7
+RUNS=$8
+BENCH_RUNS=$9
 CONFIG_NAME='final_config_commands'
 
 cd combinator
@@ -23,6 +24,7 @@ do
     -i=${INSTANCE_NUMBER} \
     -f=${INSTANCE_SET} \
     -id=${INSTANCE_DIR} \
+    --chunk-number=${CHUNKS} \
     --parallelism=${THREADS} \
     --results-log-detail=${LOG_DIR}/run_${i}/logall.txt \
     --results-log=${LOG_DIR}/run_${i}/logbest.txt
@@ -38,5 +40,9 @@ do
     rm cp_*
     rm model*
 done
+rm *.arff
+rm classify_*
+rm cp_*
+rm model*
 
 cd -
