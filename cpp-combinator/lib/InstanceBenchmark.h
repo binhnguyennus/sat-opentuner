@@ -1,9 +1,9 @@
-#ifndef __BENCHMARK_H_INCLUDED__
-#define __BENCHMARK_H_INCLUDED__
+#ifndef __INSTANCEBENCHMARK_H_INCLUDED__
+#define __INSTANCEBENCHMARK_H_INCLUDED__
 
 #include <string>
 
-class Benchmark {
+class InstanceBenchmark {
     std::string instance;
     std::string solver;
     float median, mean, stddev;
@@ -21,6 +21,6 @@ class Benchmark {
 
         std::string get_solver_name();
         std::string get_instance_name();
-        Benchmark(std::string, std::string, float*);
+        InstanceBenchmark(std::string, std::string, float*);
 };
 #endif
