@@ -6,21 +6,21 @@
 class InstanceBenchmark {
     std::string instance;
     std::string solver;
-    float median, mean, stddev;
-    float* values;
+    double median, mean, stddev;
+    double* values;
 
-    float calc_median();
-    float calc_mean();
-    float calc_stddev();
+    double calc_median();
+    double calc_mean();
+    double calc_stddev();
 
     public:
-        float* get_values();
-        float get_median();
-        float get_mean();
-        float get_stddev();
+        double* get_values();
+        double get_median();
+        double get_mean();
+        double get_stddev();
 
         std::string get_solver_name();
         std::string get_instance_name();
-        InstanceBenchmark(std::string, std::string, float*);
+        InstanceBenchmark(std::string, std::string, double*);
 };
 #endif

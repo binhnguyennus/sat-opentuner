@@ -17,11 +17,10 @@ int Solver::get_id() {
     return id;
 }
 InstanceBenchmark Solver::benchmark(std::string instance, int runs) {
-    float results[runs];
+    double results[runs];
     for(int i = 0; i < runs; i++){
-        results[i] = 0;
+        results[i] = Solver::solve(instance);
     }
-    std::cout << runs << "\n";
     InstanceBenchmark b (instance, name, results);
     return b;
 }
@@ -53,5 +52,9 @@ int main() {
     std::printf("id: %d\n", s.get_id());
     InstanceBenchmark b = s.benchmark("test_instance", 10);
     std::printf("instance_name: %s\n", b.get_instance_name().c_str());
+    double* results = b.get_values();
+    for(int i = 0; i < 10; i++){
+        std::printf("results[%d]=%f\n", i, results[i]);
+    }
     return 0;
 }
