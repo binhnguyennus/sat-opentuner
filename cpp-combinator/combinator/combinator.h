@@ -14,11 +14,11 @@ class Combinator{
     std::string* instances;
     int combination_length;
     int solvers_length;
-    bool debug_lv1;
-    bool debug_lv2;
+    bool debug_lvl1;
+    bool debug_lvl2;
 
-    Solver* build_solver_list(std::string**);
-    std::string* build_instance_list(std::string, std::string);
+    void build_solver_list(std::string**);
+    void build_instance_list(std::string, std::string);
 
     public:
         double solve(int*);
@@ -28,7 +28,7 @@ class Combinator{
         Solver* get_solvers();
         std::string get_instaces();
         Combinator(std::string**, std::string, std::string,
-                   bool, bool, int);
+                   bool, bool, int, int);
 };
 
 #endif

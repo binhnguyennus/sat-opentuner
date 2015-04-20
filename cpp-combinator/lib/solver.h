@@ -26,6 +26,7 @@ class InstanceBenchmark {
         std::string get_solver_name();
         std::string get_instance_name();
         InstanceBenchmark(std::string, std::string, double*);
+        InstanceBenchmark();
 };
 
 class Solver {
@@ -41,6 +42,7 @@ class Solver {
         int get_id();
         double solve(std::string);
         InstanceBenchmark benchmark(std::string, int);
+        Solver();
         Solver(int, std::string, std::string, 
                std::string, bool);
 };

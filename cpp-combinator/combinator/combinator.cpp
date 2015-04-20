@@ -1,25 +1,6 @@
 #include "../lib/solver.h"
+#include "combinator.h"
 #include <stdio.h>
-
-Combinator::build_solver_list(std::string** values){
-    Solver solver_list [solvers_length];
-    for (int i = 0; i < solvers_length; i++){
-        solver_list[i] = Solver(i, values[i][0], values[i][0],
-                                values[i][1], debug_lvl2);
-    }
-    return solver_list;
-}
-
-Combinator::build_instance_list(std::string dir, std::string file){
-    std::ifstream input(file);
-    std::string instance;
-    std::string instance_list [combination_length];
-    for (int i = 0; i < combination_length; i++){
-        input >> instance;
-        instance_list[i] = dir + instance;
-    }
-    return instance_list;
-}
 
 Combinator::Combinator(std::string** solver_values,
                        std::string instances_dir,
@@ -33,8 +14,27 @@ Combinator::Combinator(std::string** solver_values,
     debug_lvl1         = new_debug_lvl1;
     debug_lvl2         = new_debug_lvl2;
 
-    solvers   = build_solver_list(solver_values);
-    instances = build_instance_list(instances_dir, instance_file);
+    Solver solvers [solvers_length];
+    std::string instances [combination_length];
+    build_solver_list(solver_values);
+    build_instance_list(instances_dir, instance_file);
+}
+
+void Combinator::build_solver_list(std::string** values){
+    for (int i = 0; i < solvers_length; i++){
+        solvers[i] = Solver(i, values[i][0], values[i][0],
+                                values[i][1], debug_lvl2);
+    }
+}
+
+void Combinator::build_instance_list(std::string dir,
+                                     std::string file){
+    std::ifstream infile(file.c_str());
+    std::string instance;
+    for (int i = 0; i < combination_length; i++){
+        infile >> instance;
+        instances[i] = dir + instance;
+    }
 }
 
 int main(){

@@ -1,5 +1,7 @@
 #include "solver.h"
 
+InstanceBenchmark::InstanceBenchmark() {};
+
 InstanceBenchmark::InstanceBenchmark(std::string new_instance, 
                                      std::string new_solver,
                                      double* new_values) {
@@ -37,6 +39,8 @@ double InstanceBenchmark::calc_mean() {
 double InstanceBenchmark::calc_median() {
     return 0.0;
 }
+
+Solver::Solver() {};
 
 Solver::Solver(int new_id, std::string new_name, std::string new_cmd,
                std::string new_args, bool new_debug) {
