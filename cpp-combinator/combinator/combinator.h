@@ -24,9 +24,8 @@ class Combinator{
         double solve(int*);
         double solve(int, std::string);
         double solve(int);
-        int get_combination_length();
         Solver* get_solvers();
-        std::string get_instaces();
+        std::string* get_instances();
         Combinator(std::string**, std::string, std::string,
                    bool, bool, int, int);
 };
