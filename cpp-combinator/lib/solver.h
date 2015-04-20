@@ -42,6 +42,6 @@ class Solver {
         double solve(std::string);
         InstanceBenchmark benchmark(std::string, int);
         Solver(int, std::string, std::string, 
-               std::string, bool, std::string);
+               std::string, bool);
 };
 #endif

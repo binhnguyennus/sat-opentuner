@@ -39,14 +39,13 @@ double InstanceBenchmark::calc_median() {
 }
 
 Solver::Solver(int new_id, std::string new_name, std::string new_cmd,
-               std::string new_args, bool new_debug, 
-               std::string new_separator) {
+               std::string new_args, bool new_debug) {
     name  = new_name;
     cmd   = new_cmd;
     args  = new_args;
     debug = new_debug;
     id = new_id;
-    separator = new_separator;
+    separator = " ";
 }
 std::string Solver::get_name() {
     return name;

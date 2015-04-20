@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <fstream>
 #include "../lib/solver.h"
 
 class Solver;
@@ -16,8 +17,8 @@ class Combinator{
     bool debug_lv1;
     bool debug_lv2;
 
-    Solver* build_solver_list();
-    std::string* build_instance_list();
+    Solver* build_solver_list(std::string**);
+    std::string* build_instance_list(std::string, std::string);
 
     public:
         double solve(int*);
