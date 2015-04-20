@@ -1,13 +1,11 @@
 CC=g++
 CFLAGS=-Wall -O3 -std=c++11
 LIBDIR=./lib
+COMDIR=./combinator
 
-all: instance-benchmark, solver, combinator
+all: combinator
 clean:
-	rm instance-benchmark, solver, combinator
+	rm $(COMDIR)/combinator $(COMDIR)/*.o $(LIBDIR)/*.o
 	
-instance-benchmark: $(LIBDIR)/InstanceBenchmark.cpp
-	$(CC) $(CFLAGS) $(LIBDIR)/InstanceBenchmark.cpp -o instance-benchmark
-
-solver: $(LIBDIR)/Solver.cpp $(LIBDIR)/InstanceBenchmark.cpp
-	$(CC) $(CFLAGS) $(LIBDIR)/Solver.cpp $(LIBDIR)/InstanceBenchmark.cpp -o solver
+combinator: $(COMDIR)/combinator.o $(LIBDIR)/solver.o
+	$(CC) $(CFLAGS) $(COMDIR)/combinator.cpp $(LIBDIR)/solver.cpp -o $(COMDIR)/combinator

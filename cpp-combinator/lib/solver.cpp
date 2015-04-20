@@ -1,4 +1,42 @@
-#include "Solver.h"
+#include "solver.h"
+
+InstanceBenchmark::InstanceBenchmark(std::string new_instance, 
+                                     std::string new_solver,
+                                     double* new_values) {
+    solver   = new_solver;
+    instance = new_instance;
+    values   = new_values;
+    median   = calc_median();
+    mean     = calc_mean();
+    stddev   = calc_stddev();
+}
+std::string InstanceBenchmark::get_instance_name() {
+    return instance;
+}
+std::string InstanceBenchmark::get_solver_name() {
+    return solver;
+}
+double InstanceBenchmark::get_mean() {
+    return mean;
+}
+double* InstanceBenchmark::get_values() {
+    return values;
+}
+double InstanceBenchmark::get_median() {
+    return median;
+}
+double InstanceBenchmark::get_stddev() {
+    return stddev;
+}
+double InstanceBenchmark::calc_stddev() {
+    return 0.0;
+}
+double InstanceBenchmark::calc_mean() {
+    return 0.0;
+}
+double InstanceBenchmark::calc_median() {
+    return 0.0;
+}
 
 Solver::Solver(int new_id, std::string new_name, std::string new_cmd,
                std::string new_args, bool new_debug, 
@@ -43,18 +81,4 @@ double Solver::solve(std::string instance) {
     return (end.tv_sec - start.tv_sec) +
            (end.tv_usec - start.tv_usec) /
             1000000.0;
-}
-int main() {
-    Solver s (0, "test_name", "test_cmd",
-              "test_args", true, " ");
-    std::printf("name: %s\n", s.get_name().c_str());
-    std::printf("time_to_solve: %f\n", s.solve("test_instance"));
-    std::printf("id: %d\n", s.get_id());
-    InstanceBenchmark b = s.benchmark("test_instance", 10);
-    std::printf("instance_name: %s\n", b.get_instance_name().c_str());
-    double* results = b.get_values();
-    for(int i = 0; i < 10; i++){
-        std::printf("results[%d]=%f\n", i, results[i]);
-    }
-    return 0;
 }
