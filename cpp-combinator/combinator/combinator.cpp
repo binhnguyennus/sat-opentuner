@@ -106,15 +106,30 @@ void test_solver(){
     }
 }
 void test_combinator(){
-    std::string** p = new std::string*[2];
-    p[0] = new std::string[2];
-    p[1] = new std::string[2];
-
-    p[0][0] = "./solvers/minisat_blbd/minisat_blbd";
+    std::string** p = new std::string*[7];
+    for (int i = 0; i < 7; i++){
+        p[i] = new std::string[2];
+    }
+    p[0][0] = "./solvers/glueSplit/glueSplit_clasp";
     p[0][1] = "";
 
-    p[1][0] = "./solvers/Lingeling/lingeling -v --druplig";
+    p[1][0] = "./solvers/Lingeling/lingeling -v";
     p[1][1] = "";
+
+    p[2][0] = "./solvers/Lingeling/lingeling -v --druplig";
+    p[2][1] = "";
+
+    p[3][0] = "./solvers/Sparrow/SparrowToRiss.sh";
+    p[3][1] = "1 .";
+
+    p[4][0] = "./solvers/minisat_blbd/minisat_blbd";
+    p[4][1] = "";
+
+    p[5][0] = "./solvers/SGSeq/SGSeq.sh";
+    p[5][1] = "";
+
+    p[6][0] = "./cryptominisat/cryptominisat";
+    p[6][1] = "";
 
     std::string d = "instances/sat_lib_harder/";
     std::string f = "sets/instance_set_6.txt";
@@ -124,7 +139,38 @@ void test_combinator(){
     printf("Solving with \"1\": %f\n", c.solve(1));
 }
 int main(){
-    test_combinator();
+    //test_combinator();
     //test_solver();
+    std::string** p = new std::string*[7];
+    for (int i = 0; i < 7; i++){
+        p[i] = new std::string[2];
+    }
+    p[0][0] = "./solvers/glueSplit/glueSplit_clasp";
+    p[0][1] = "";
+
+    p[1][0] = "./solvers/Lingeling/lingeling -v";
+    p[1][1] = "";
+
+    p[2][0] = "./solvers/Lingeling/lingeling -v --druplig";
+    p[2][1] = "";
+
+    p[3][0] = "./solvers/Sparrow/SparrowToRiss.sh";
+    p[3][1] = "1 .";
+
+    p[4][0] = "./solvers/minisat_blbd/minisat_blbd";
+    p[4][1] = "";
+
+    p[5][0] = "./solvers/SGSeq/SGSeq.sh";
+    p[5][1] = "";
+
+    p[6][0] = "./cryptominisat/cryptominisat";
+    p[6][1] = "";
+
+    std::string d = "instances/sat_lib_harder/";
+    std::string f = "sets/instance_set_6.txt";
+
+    Combinator c (p, d, f, false, false, 7, 100);
+    printf("Solving with \"0\": %f\n", c.solve(0));
+    printf("Solving with \"3\": %f\n", c.solve(3));
     return 0;
 }
