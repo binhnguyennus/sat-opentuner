@@ -66,9 +66,12 @@ int Solver::get_id(){
     return id;
 }
 InstanceBenchmark Solver::benchmark(std::string instance, int runs){
-    double results[runs];
+    double* results = new double[runs];
     for(int i = 0; i < runs; i++){
         results[i] = Solver::solve(instance);
+        if (debug){
+            printf("Sample %d: %f\n", i, results[i]);
+        }
     }
     InstanceBenchmark b (instance, name, results);
     return b;
@@ -84,7 +87,10 @@ double Solver::solve(std::string instance){
         exit(1);
     }
     if (!debug) {
-        run_cmd += " 2> /dev/null";
+        run_cmd += "2&> /dev/null";
+    }
+    else{
+        printf("cmd: %s\n", run_cmd.c_str());
     }
     gettimeofday(&start, NULL);
     system(run_cmd.c_str());

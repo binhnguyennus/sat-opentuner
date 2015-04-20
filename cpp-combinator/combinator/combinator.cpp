@@ -35,6 +35,32 @@ void Combinator::build_instance_list(std::string dir,
         printf("Error opening file: \"%s\"\n", file.c_str());
     }
 }
+double Combinator::solve(int* combination){
+    double result = 0;
+    if(debug_lvl1){
+        printf("Starting to solve a Combination with length %d.\n",
+               combination_length);
+    }
+    for (int i = 0; i < combination_length; i++){
+        result += solve(combination[i], i);
+    }
+    return result;
+}
+double Combinator::solve(int solver_id){
+    double result = 0;
+    if(debug_lvl1){
+        printf("Starting to solve a set with length %d, ",
+               combination_length);
+        printf("using Solver %d\n", solver_id);
+    }
+    for (int i = 0; i < combination_length; i++){
+        result += solve(solver_id, i);
+    }
+    return result;
+}
+double Combinator::solve(int solver_id, int target_id){
+    return solvers[solver_id].solve(instances[target_id]);
+}
 Combinator::Combinator(std::string** solver_values,
                        std::string instances_dir,
                        std::string instance_file,
@@ -65,12 +91,14 @@ Combinator::Combinator(std::string** solver_values,
     build_instance_list(instances_dir, instance_file);
 }
 void test_solver(){
-    Solver s (0, "test_name", "test_cmd",
-              "test_args", true);
+    Solver s (0, "minisat", "./solvers/minisat_blbd/minisat_blbd", 
+              "", true);
     printf("name: %s\n", s.get_name().c_str());
-    printf("time_to_solve: %f\n", s.solve("test_instance"));
+    printf("time_to_solve: %f\n",
+           s.solve("instances/sat_lib_harder/uf150-0100.cnf"));
     printf("id: %d\n", s.get_id());
-    InstanceBenchmark b = s.benchmark("test_instance", 10);
+    InstanceBenchmark b;
+    b = s.benchmark("instances/sat_lib_harder/uf150-0100.cnf", 10);
     printf("instance_name: %s\n", b.get_instance_name().c_str());
     double* results = b.get_values();
     for (int i = 0; i < 10; i++){
@@ -81,16 +109,22 @@ void test_combinator(){
     std::string** p = new std::string*[2];
     p[0] = new std::string[2];
     p[1] = new std::string[2];
-    p[0][0] = "solverA";
-    p[0][1] = "argsA";
-    p[1][0] = "solverB";
-    p[1][1] = "argsB";
+
+    p[0][0] = "./solvers/minisat_blbd/minisat_blbd";
+    p[0][1] = "";
+
+    p[1][0] = "./solvers/Lingeling/lingeling -v --druplig";
+    p[1][1] = "";
 
     std::string d = "instances/sat_lib_harder/";
     std::string f = "sets/instance_set_6.txt";
-    Combinator c (p, d, f, true, true, 2, 100);
+
+    Combinator c (p, d, f, true, false, 2, 100);
+    printf("Solving with \"0\": %f\n", c.solve(0));
+    printf("Solving with \"1\": %f\n", c.solve(1));
 }
 int main(){
     test_combinator();
+    //test_solver();
     return 0;
 }

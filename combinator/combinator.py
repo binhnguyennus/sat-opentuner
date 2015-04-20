@@ -33,7 +33,6 @@ class Solver:
 
 class Combinator:
     def _combination(self, combination):
-        print len(combination)
         if self._debug:
             print '> Starting to solve a combination.'
         for i in range(len(combination)):

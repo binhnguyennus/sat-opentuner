@@ -22,7 +22,7 @@ class Combinator{
 
     public:
         double solve(int*);
-        double solve(int, std::string);
+        double solve(int, int);
         double solve(int);
         Solver* get_solvers();
         std::string* get_instances();
