@@ -1,6 +1,20 @@
 #include "../lib/solver.h"
 #include <stdio.h>
 
+Combinator::Combinator(std::string** new_solver_values,
+                       std::string new_instances_dir,
+                       std::string new_instance_file,
+                       bool new_debug_lvl1,
+                       bool new_debug_lvl2,
+                       int new_solvers_length){
+    solvers_length = new_solvers_length;
+    debug_lvl1 = new_debug_lvl1;
+    debug_lvl2 = new_debug_lvl2;
+
+    solvers = new Solvers[solvers_length];
+
+}
+
 int main(){
     Solver s (0, "test_name", "test_cmd",
               "test_args", true, " ");
