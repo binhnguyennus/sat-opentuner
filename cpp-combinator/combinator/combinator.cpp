@@ -34,6 +34,7 @@ void Combinator::build_instance_list(std::string dir,
     else if (debug_lvl1){
         printf("Error opening file: \"%s\"\n", file.c_str());
     }
+    infile.close();
 }
 double Combinator::solve(int* combination){
     double result = 0;
@@ -106,70 +107,70 @@ void test_solver(){
     }
 }
 void test_combinator(){
-    std::string** p = new std::string*[7];
+    std::string** solver_names = new std::string*[7];
     for (int i = 0; i < 7; i++){
-        p[i] = new std::string[2];
+        solver_names[i] = new std::string[2];
     }
-    p[0][0] = "./solvers/glueSplit/glueSplit_clasp";
-    p[0][1] = "";
+    solver_names[0][0] = "./solvers/glueSplit/glueSplit_clasp";
+    solver_names[0][1] = "";
 
-    p[1][0] = "./solvers/Lingeling/lingeling -v";
-    p[1][1] = "";
+    solver_names[1][0] = "./solvers/Lingeling/lingeling -v";
+    solver_names[1][1] = "";
 
-    p[2][0] = "./solvers/Lingeling/lingeling -v --druplig";
-    p[2][1] = "";
+    solver_names[2][0] = "./solvers/Lingeling/lingeling -v --druplig";
+    solver_names[2][1] = "";
 
-    p[3][0] = "./solvers/Sparrow/SparrowToRiss.sh";
-    p[3][1] = "1 .";
+    solver_names[3][0] = "./solvers/Sparrow/SparrowToRiss.sh";
+    solver_names[3][1] = "1 .";
 
-    p[4][0] = "./solvers/minisat_blbd/minisat_blbd";
-    p[4][1] = "";
+    solver_names[4][0] = "./solvers/minisat_blbd/minisat_blbd";
+    solver_names[4][1] = "";
 
-    p[5][0] = "./solvers/SGSeq/SGSeq.sh";
-    p[5][1] = "";
+    solver_names[5][0] = "./solvers/SGSeq/SGSeq.sh";
+    solver_names[5][1] = "";
 
-    p[6][0] = "./cryptominisat/cryptominisat";
-    p[6][1] = "";
+    solver_names[6][0] = "./cryptominisat/cryptominisat";
+    solver_names[6][1] = "";
 
     std::string d = "instances/sat_lib_harder/";
     std::string f = "sets/instance_set_6.txt";
 
-    Combinator c (p, d, f, true, false, 2, 100);
+    Combinator c (solver_names, d, f, true, false, 2, 100);
     printf("Solving with \"0\": %f\n", c.solve(0));
     printf("Solving with \"1\": %f\n", c.solve(1));
 }
-int main(){
-    //test_combinator();
-    //test_solver();
-    std::string** p = new std::string*[7];
-    for (int i = 0; i < 7; i++){
-        p[i] = new std::string[2];
+int main(int argc, char* argv[]){
+    int SOLVER_LENGTH = 7;
+    std::string** solver_names = new std::string*[SOLVER_LENGTH];
+    for (int i = 0; i < SOLVER_LENGTH; i++){
+        solver_names[i] = new std::string[2];
     }
-    p[0][0] = "./solvers/glueSplit/glueSplit_clasp";
-    p[0][1] = "";
+    solver_names[0][0] = "./solvers/glueSplit/glueSplit_clasp";
+    solver_names[0][1] = "";
 
-    p[1][0] = "./solvers/Lingeling/lingeling -v";
-    p[1][1] = "";
+    solver_names[1][0] = "./solvers/Lingeling/lingeling -v";
+    solver_names[1][1] = "";
 
-    p[2][0] = "./solvers/Lingeling/lingeling -v --druplig";
-    p[2][1] = "";
+    solver_names[2][0] = "./solvers/Lingeling/lingeling -v --druplig";
+    solver_names[2][1] = "";
 
-    p[3][0] = "./solvers/Sparrow/SparrowToRiss.sh";
-    p[3][1] = "1 .";
+    solver_names[3][0] = "./solvers/Sparrow/SparrowToRiss.sh";
+    solver_names[3][1] = "1 .";
 
-    p[4][0] = "./solvers/minisat_blbd/minisat_blbd";
-    p[4][1] = "";
+    solver_names[4][0] = "./solvers/minisat_blbd/minisat_blbd";
+    solver_names[4][1] = "";
 
-    p[5][0] = "./solvers/SGSeq/SGSeq.sh";
-    p[5][1] = "";
+    solver_names[5][0] = "./solvers/SGSeq/SGSeq.sh";
+    solver_names[5][1] = "";
 
-    p[6][0] = "./cryptominisat/cryptominisat";
-    p[6][1] = "";
+    solver_names[6][0] = "./cryptominisat/cryptominisat";
+    solver_names[6][1] = "";
 
-    std::string d = "instances/sat_lib_harder/";
-    std::string f = "sets/instance_set_6.txt";
+    std::string instances_dir = "instances/sat_lib_harder/";
+    std::string instance_file = "sets/instance_set_6.txt";
 
-    Combinator c (p, d, f, false, false, 7, 100);
+    Combinator c (solver_names, instances_dir, instance_file, true, 
+                  false, SOLVER_LENGTH, 100);
     printf("Solving with \"0\": %f\n", c.solve(0));
     printf("Solving with \"3\": %f\n", c.solve(3));
     return 0;
