@@ -1,6 +1,5 @@
 #include "../lib/solver.h"
 #include "combinator.h"
-#include <stdio.h>
 
 Solver* Combinator::get_solvers(){
     return solvers;
@@ -139,6 +138,10 @@ void test_combinator(){
     printf("Solving with \"0\": %f\n", c.solve(0));
     printf("Solving with \"1\": %f\n", c.solve(1));
 }
+int parse_options(int argc, char* argv[]){
+
+    return 0;
+}
 int main(int argc, char* argv[]){
     int SOLVER_LENGTH = 7;
     std::string** solver_names = new std::string*[SOLVER_LENGTH];
@@ -169,7 +172,7 @@ int main(int argc, char* argv[]){
     std::string instances_dir = "instances/sat_lib_harder/";
     std::string instance_file = "sets/instance_set_6.txt";
 
-    Combinator c (solver_names, instances_dir, instance_file, true, 
+    Combinator c (solver_names, instances_dir, instance_file, true,
                   false, SOLVER_LENGTH, 100);
     printf("Solving with \"0\": %f\n", c.solve(0));
     printf("Solving with \"3\": %f\n", c.solve(3));

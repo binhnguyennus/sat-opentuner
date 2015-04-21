@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <fstream>
+#include <getopt.h>
 #include "../lib/solver.h"
 
 class Solver;
