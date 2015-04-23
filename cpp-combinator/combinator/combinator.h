@@ -13,7 +13,7 @@ class InstanceBenchmark;
 class Combinator{
     Solver* solvers;
     std::string* instances;
-    int combination_length;
+    int instance_set_size;
     int solvers_length;
     bool debug_lvl1;
     bool debug_lvl2;
