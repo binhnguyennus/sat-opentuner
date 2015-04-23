@@ -87,7 +87,7 @@ double Solver::solve(std::string instance){
         exit(1);
     }
     if (!debug) {
-        run_cmd += "2&> /dev/null";
+        run_cmd += "> /dev/null 2>&1";
     }
     else{
         printf("cmd: %s\n", run_cmd.c_str());

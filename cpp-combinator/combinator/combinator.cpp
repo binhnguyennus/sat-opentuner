@@ -256,7 +256,7 @@ int main(int argc, char* argv[]){
         exit(1);
     }
     Combinator c (solver_names, instances_dir, instance_file, 
-                  debug_lvl1, true, SOLVER_LENGTH, instance_set_size);
+                  debug_lvl1, debug_lvl2, SOLVER_LENGTH, instance_set_size);
     if (solve_single){
         printf("oops\n");
     } else if (solve_all){
