@@ -1,0 +1,3 @@
+INSTANCE_DIR: instances/sat_lib_harder/
+INSTANCE_FILE: sets/instance_set_6.txt
+SET_SIZE: 100
