@@ -154,11 +154,11 @@ class Searcher:
 parser = argparse.ArgumentParser()
 parser.add_argument('-id', '--instance-directory',
     dest = 'instances_dir',
-    default = 'instances/sat_lib/',
+    default = 'instances/sat_lib_harder/',
     help = 'The directory containing instances to be solved.')
 parser.add_argument('-f', '--instance-file',
     dest = 'instances',
-    default = 'sets/instance_set_3.txt',
+    default = 'sets/instance_set_6.txt',
     help = 'The file with the names of the selected instances.')
 parser.add_argument('-s', '--solvers-directory',
     dest = 'solvers_dir',

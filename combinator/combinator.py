@@ -82,7 +82,7 @@ parser.add_argument('-c', '--solver-config', nargs = '+',
     help = 'A sequence of integers specifying a solver sequence.')
 parser.add_argument('-f', '--instance-file',
     dest = 'instances',
-    default = 'sets/instance_set_3.txt',
+    default = 'sets/instance_set_6.txt',
     help = 'A file containing a subset of instances to solve.')
 parser.add_argument('-sg', '--single-solve',
     dest = 'single',
@@ -99,7 +99,7 @@ parser.add_argument('-ss', '--select-solver',
     help = 'The solver to be used. (only when --single-solver is passed)')
 parser.add_argument('-id', '--instance-directory',
     dest = 'instances_dir',
-    default = 'instances/sat_lib/',
+    default = 'instances/sat_lib_harder/',
     help = 'The directory with all instances to solve.')
 parser.add_argument('-sa', '--solve-all',
     dest = 'solve_all',
