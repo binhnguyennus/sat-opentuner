@@ -13,6 +13,13 @@ RUNS=$8
 BENCH_RUNS=$9
 CONFIG_NAME='final_config_commands'
 
+function clean {
+    rm *.arff
+    rm classify_*
+    rm cp_*
+    rm model*
+}
+
 cd combinator
 for i in $(seq 1 $RUNS)
 do
@@ -35,14 +42,8 @@ do
           ${CONFIG_NAME}`
 
     rm -r opentuner.*
-    rm *.arff
-    rm classify_*
-    rm cp_*
-    rm model*
+    clean
 done
-rm *.arff
-rm classify_*
-rm cp_*
-rm model*
 
+clean
 cd -

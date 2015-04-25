@@ -6,6 +6,13 @@ RUNS=$1
 FILE_PATH=$2
 FILE=$3
 
+funtion clean {
+    rm *.arff
+    rm classify*
+    rm cp_*
+    rm model*
+}
+
 cd ${FILE_PATH}
 for i in $(seq 1 $RUNS)
 do
@@ -17,8 +24,5 @@ do
     done < "${FILE}"
 done
 
-rm *.arff
-rm classify*
-rm cp_*
-rm model*
+clean
 cd -

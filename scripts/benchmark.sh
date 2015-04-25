@@ -9,6 +9,13 @@ LOG_DIR=$3
 INSTANCES=$4
 INSTANCE_DIR=$5
 
+function clean {
+    rm *.arff
+    rm classify_*
+    rm cp_*
+    rm model*
+}
+
 # Runs the benchmark for every solver, for
 # a given number of runs.
 cd combinator
@@ -28,8 +35,5 @@ do
     done
 done
 
-rm *.arff
-rm classify_*
-rm cp_*
-rm model*
+clean
 cd -
