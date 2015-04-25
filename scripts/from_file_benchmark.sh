@@ -6,7 +6,7 @@ RUNS=$1
 FILE_PATH=$2
 FILE=$3
 
-funtion clean {
+function clean {
     rm *.arff
     rm classify*
     rm cp_*
