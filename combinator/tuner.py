@@ -8,6 +8,7 @@ import opentuner
 from opentuner import ConfigurationManipulator
 from opentuner import EnumParameter
 from opentuner import IntegerParameter
+from opentuner import IntegerParameterArray
 from opentuner import MeasurementInterface
 from opentuner import Result
 
@@ -56,7 +57,7 @@ class SATTuner(MeasurementInterface):
 
         manipulator.add_parameter(
                 IntegerParameterArray("instances", [s_min]*CHUNKS,
-                                      s_max*[CHUNKS]))
+                                      [s_max]*CHUNKS))
 
         return manipulator
 
@@ -74,7 +75,7 @@ class SATTuner(MeasurementInterface):
 
         for i in range (INSTANCES):
             cmd += ' ' + str(cfg["instances"][j])
-            if (i > 0 and j < len(cfg) - 1 and i % CHUNK_SIZE == 0):
+            if (i > 0 and j < len(cfg["instances"]) - 1 and i % CHUNK_SIZE == 0):
                 j += 1
 
         run_result = self.call_program(cmd, limit=TIMEOUT)
@@ -102,7 +103,7 @@ class SATTuner(MeasurementInterface):
 
         for i in range (INSTANCES):
             cmd += ' ' + str(cfg["instances"][j])
-            if (i > 0 and j < len(cfg) - 1 and i % CHUNK_SIZE == 0):
+            if (i > 0 and j < len(cfg["instances"]) - 1 and i % CHUNK_SIZE == 0):
                 j += 1
 
         print "Optimal config written to " + LOG_DIR + LOG_FILE + ": ", cmd
