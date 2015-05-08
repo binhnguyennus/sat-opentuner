@@ -75,7 +75,9 @@ class SATTuner(MeasurementInterface):
 
         for i in range (INSTANCES):
             cmd += ' ' + str(cfg["instances"][j])
-            if (i > 0 and j < len(cfg["instances"]) - 1 and i % CHUNK_SIZE == 0):
+            if ((i > 0 and j < len(cfg["instances"]) - 1 
+                       and i % CHUNK_SIZE == 0) 
+                       or (i == 0 and CHUNKS == INSTANCES)):
                 j += 1
 
         run_result = self.call_program(cmd, limit=TIMEOUT)
@@ -83,7 +85,10 @@ class SATTuner(MeasurementInterface):
             result = TIMEOUT
         else:
             result = run_result['time']
-        return Result(time=result)
+
+        stdout = run_result['stdout']
+        stdout_time = float(stdout.split("Time: ")[1])
+        return Result(time=stdout_time)
 
     def save_final_config(self, configuration):
         cfg = configuration.data
@@ -103,7 +108,9 @@ class SATTuner(MeasurementInterface):
 
         for i in range (INSTANCES):
             cmd += ' ' + str(cfg["instances"][j])
-            if (i > 0 and j < len(cfg["instances"]) - 1 and i % CHUNK_SIZE == 0):
+            if ((i > 0 and j < len(cfg["instances"]) - 1 
+                       and i % CHUNK_SIZE == 0)
+                       or (i == 0 and CHUNKS == INSTANCES)):
                 j += 1
 
         print "Optimal config written to " + LOG_DIR + LOG_FILE + ": ", cmd
