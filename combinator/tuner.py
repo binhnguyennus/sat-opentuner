@@ -50,9 +50,6 @@ class SATTuner(MeasurementInterface):
     def manipulator(self):
         manipulator = ConfigurationManipulator()
         solvers, s_min, s_max = SOLVERS
-#        for i in range (CHUNKS):
-#            manipulator.add_parameter(
-#                    IntegerParameter(solvers+str(i), s_min, s_max))
 
         manipulator.add_parameter(
                 IntegerParameterArray("instances", [s_min]*CHUNKS,
@@ -67,10 +64,6 @@ class SATTuner(MeasurementInterface):
         cmd = CMD
         cmd += INSTANCE_FILE + BENCHMARK + CONFIG
         j = 0
-#        for i in range (INSTANCES):
-#            cmd += ' ' + str(cfg[solver + str(j)])
-#            if (i > 0 and j < len(cfg) - 1 and i % CHUNK_SIZE == 0):
-#                j += 1
 
         for i in range (INSTANCES):
             cmd += ' ' + str(cfg["instances"][j])
@@ -95,10 +88,6 @@ class SATTuner(MeasurementInterface):
             self.manipulator().save_to_file(cfg, LOG_DIR + 'final_config.json')
 
         j = 0
-#        for i in range (INSTANCES):
-#            cmd += ' ' + str(cfg[solver + str(j)])
-#            if (i > 0 and j < len(cfg) - 1  and i % CHUNK_SIZE == 0):
-#                j += 1
 
         for i in range (INSTANCES):
             cmd += ' ' + str(cfg["instances"][j])
