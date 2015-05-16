@@ -34,9 +34,9 @@ do
     --chunk-number=${CHUNKS} \
     --parallelism=${THREADS} \
     --results-log-detail=${LOG_DIR}/run_${i}/logall.txt \
-    --results-log=${LOG_DIR}/run_${i}/logbest.txt
-    #--technique=test2
-    #--seed-configuration=${LOG_DIR}seed.json
+    --results-log=${LOG_DIR}/run_${i}/logbest.txt \
+    --technique=test2
+#    --seed-configuration=${LOG_DIR}/seed.json
     echo `../scripts/from_file_benchmark.sh ${BENCH_RUNS} \
           ${LOG_DIR}/run_${i}/ \
           ${CONFIG_NAME}`
